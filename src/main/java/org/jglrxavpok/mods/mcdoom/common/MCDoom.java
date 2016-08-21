@@ -1,5 +1,6 @@
 package org.jglrxavpok.mods.mcdoom.common;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -9,6 +10,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jglrxavpok.mods.mcdoom.client.MCDoomClientProxy;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
+import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomWeaponUpdater;
 import org.jglrxavpok.mods.mcdoom.common.items.BFGItem;
 
 @Mod(name = "MCDoom", version = "0.0.1", modid = MCDoom.modid)
@@ -33,6 +35,8 @@ public class MCDoom {
         EntityRegistry.registerModEntity(PlasmaBallEntity.class, "plasma_ball", 0, this, 64, 20, true);
 
         proxy.preInit(evt);
+
+        MinecraftForge.EVENT_BUS.register(new MCDoomWeaponUpdater());
     }
 
     @Mod.EventHandler

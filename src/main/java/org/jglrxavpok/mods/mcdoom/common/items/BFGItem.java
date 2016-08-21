@@ -55,13 +55,12 @@ public class BFGItem extends Item {
 
     public int getMaxItemUseDuration(ItemStack stack)
     {
-        return 15;
+        return 25;
     }
 
     @Override
     public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.BOW;
     }
-
 
 }

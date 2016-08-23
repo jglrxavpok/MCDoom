@@ -3,6 +3,7 @@ package org.jglrxavpok.mods.mcdoom.client;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,6 +19,9 @@ import org.jglrxavpok.mods.mcdoom.client.render.RenderPlasmaBall;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.MCDoomProxy;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
+import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
+
+import java.lang.reflect.Field;
 
 @SideOnly(Side.CLIENT)
 public class MCDoomClientProxy extends MCDoomProxy {
@@ -31,7 +35,7 @@ public class MCDoomClientProxy extends MCDoomProxy {
     @Override
     public void preInit(FMLPreInitializationEvent evt) {
         MinecraftForge.EVENT_BUS.register(screenEventHandler);
-        ModelLoader.setCustomModelResourceLocation(MCDoom.instance.getBFGItem(), 0, new ModelResourceLocation(MCDoom.modid + ":bfg9000", "inventory"));
+        registerItems();
 
         RenderingRegistry.registerEntityRenderingHandler(PlasmaBallEntity.class, new IRenderFactory<PlasmaBallEntity>() {
             @Override
@@ -39,6 +43,25 @@ public class MCDoomClientProxy extends MCDoomProxy {
                 return new RenderPlasmaBall(manager);
             }
         });
+    }
+
+    private void registerItems() {
+        Field[] fields = MCDoom.class.getDeclaredFields();
+        for(Field f : fields) {
+            if(Item.class.isAssignableFrom(f.getType())) {
+                try {
+                    f.setAccessible(true);
+                    Item item = (Item) f.get(MCDoom.instance);
+                    String id = item.getUnlocalizedName().substring("item.".length());
+                    if(item instanceof FunWeaponItem) {
+                        id = id.replace("fun_", "");
+                    }
+                    ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(MCDoom.modid + ":" + id, "inventory"));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override

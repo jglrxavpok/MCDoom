@@ -5,7 +5,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.jglrxavpok.mods.mcdoom.common.items.BFGItem;
+import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 
 public class MCDoomWeaponUpdater {
 
@@ -24,7 +24,7 @@ public class MCDoomWeaponUpdater {
         for(ItemStack s : inventory) {
             if(s == null)
                 continue;
-            if(s.getItem() instanceof BFGItem) { // TODO: Change to generic class
+            if(s.getItem() instanceof WeaponItem) { // TODO: Change to generic class
                 if(s.getItemDamage() != 0) {
                     s.setItemDamage(s.getItemDamage()-1); // TODO: Change depending on weapon
                 }

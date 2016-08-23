@@ -12,16 +12,20 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
+import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 
 import javax.annotation.Nullable;
 
-public class BFGItem extends Item {
+public class WeaponItem extends Item {
 
-    public BFGItem() {
+    private final WeaponDefinition definition;
+
+    public WeaponItem(WeaponDefinition definition) {
+        this.definition = definition;
         setMaxStackSize(1);
-        setMaxDamage(100);
+        setMaxDamage(definition.getCooldown());
         setCreativeTab(CreativeTabs.COMBAT);
-        setUnlocalizedName("bfg9000");
+        setUnlocalizedName(definition.getId());
     }
 
     @Override
@@ -39,6 +43,7 @@ public class BFGItem extends Item {
     }
 
     private void fire(World world, EntityLivingBase shooter) {
+        // TODO: Change method depending on weapon
         if(!world.isRemote) {
             PlasmaBallEntity entity = new PlasmaBallEntity(world, shooter);
             world.spawnEntityInWorld(entity);
@@ -55,7 +60,7 @@ public class BFGItem extends Item {
 
     public int getMaxItemUseDuration(ItemStack stack)
     {
-        return 25;
+        return definition.getPreFiringPause();
     }
 
     @Override

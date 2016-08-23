@@ -1,10 +1,8 @@
 package org.jglrxavpok.mods.mcdoom.client.eventhandlers;
 
-import javafx.scene.shape.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -13,20 +11,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.client.render.TextureRegion;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
-import org.jglrxavpok.mods.mcdoom.common.items.BFGItem;
-import org.lwjgl.opengl.GL11;
+import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 
 @SideOnly(Side.CLIENT)
 public class MCDoomScreenEvents {
@@ -54,7 +48,7 @@ public class MCDoomScreenEvents {
             ItemStack currentItem = ((EntityPlayer) e).inventory.getCurrentItem();
             if(currentItem != null && currentItem.getItem() != null) {
                 Item actualItem = currentItem.getItem();
-                if(actualItem instanceof BFGItem) {
+                if(actualItem instanceof WeaponItem) {
                     event.setCanceled(true);
                 }
             }
@@ -70,7 +64,7 @@ public class MCDoomScreenEvents {
                 ItemStack currentItem = ((EntityPlayer) e).inventory.getCurrentItem();
                 if(currentItem != null && currentItem.getItem() != null) {
                     Item actualItem = currentItem.getItem();
-                    if(actualItem instanceof BFGItem) {
+                    if(actualItem instanceof WeaponItem) {
                         renderBFG((EntityPlayer)e, currentItem, evt.getResolution(), evt.getPartialTicks());
                     }
                 }

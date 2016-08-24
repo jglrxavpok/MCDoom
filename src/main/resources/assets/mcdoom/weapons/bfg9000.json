@@ -1,5 +1,30 @@
 {
   "id": "bfg9000",
   "cooldown": 100,
-  "preFiringPause": 25
+  "preFiringPause": 25,
+  "render": {
+    "textures": [
+      {
+        "file": "hud/bfgsheet.png",
+        "id": "bfgsheet",
+        "width": 502,
+        "height": 163
+      }
+    ],
+
+    "regions": [
+      {
+        "id": "idle",
+        "texture": "bfgsheet",
+        "region": [0, 77, 171, 163]
+      }
+    ],
+
+    "layers": [
+      {
+        "condition": "state=idle",
+        "region": "idle"
+      }
+    ]
+  }
 }

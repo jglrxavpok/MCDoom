@@ -1,5 +1,7 @@
 package org.jglrxavpok.mods.mcdoom.client;
 
+import com.google.common.collect.Maps;
+import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -16,20 +18,27 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.client.eventhandlers.MCDoomScreenEvents;
 import org.jglrxavpok.mods.mcdoom.client.render.RenderPlasmaBall;
+import org.jglrxavpok.mods.mcdoom.client.render.WeaponRenderer;
+import org.jglrxavpok.mods.mcdoom.client.render.WeaponRendererLoader;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.MCDoomProxy;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class MCDoomClientProxy extends MCDoomProxy {
 
     private final MCDoomScreenEvents screenEventHandler;
+    private final WeaponRendererLoader weaponRendererLoader;
+    private Map<String, WeaponRenderer> renderers;
 
     public MCDoomClientProxy() {
-        screenEventHandler = new MCDoomScreenEvents();
+        renderers = Maps.newHashMap();
+        screenEventHandler = new MCDoomScreenEvents(this);
+        weaponRendererLoader = new WeaponRendererLoader();
     }
 
     @Override
@@ -43,6 +52,17 @@ public class MCDoomClientProxy extends MCDoomProxy {
                 return new RenderPlasmaBall(manager);
             }
         });
+
+        loadWeaponRenderers();
+    }
+
+    private void loadWeaponRenderers() {
+        String[] ids = MCDoom.instance.getWeaponIDs();
+        for(String id : ids) {
+            JsonObject renderObject = MCDoom.instance.readWeaponFile(id).getAsJsonObject("render");
+            WeaponRenderer renderer = weaponRendererLoader.loadFromJson(id, renderObject);
+            renderers.put(id, renderer);
+        }
     }
 
     private void registerItems() {
@@ -72,5 +92,9 @@ public class MCDoomClientProxy extends MCDoomProxy {
     @Override
     public void postInit(FMLPostInitializationEvent evt) {
 
+    }
+
+    public WeaponRenderer getRenderer(String id) {
+        return renderers.get(id);
     }
 }

@@ -52,8 +52,6 @@ public class WeaponItem extends Item {
 
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
         fire(worldIn, entityLiving);
-        entityLiving.setHeldItem(entityLiving.getActiveHand(), stack);
-        entityLiving.resetActiveHand();
         stack.setItemDamage(getMaxDamage());
         return stack;
     }
@@ -68,4 +66,7 @@ public class WeaponItem extends Item {
         return EnumAction.BOW;
     }
 
+    public WeaponDefinition getDefinition() {
+        return definition;
+    }
 }

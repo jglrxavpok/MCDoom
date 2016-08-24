@@ -36,9 +36,11 @@ public class MCDoom {
 
     @SidedProxy(clientSide = "org.jglrxavpok.mods.mcdoom.client.MCDoomClientProxy", serverSide = "org.jglrxavpok.mods.mcdoom.server.MCDoomServerProxy")
     public static MCDoomProxy proxy;
+    private Gson gson;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
+        gson = new Gson();
         bfg = new WeaponItem(loadWeapon("bfg9000"));
         funBFG = new FunWeaponItem(loadWeapon("bfg9000"));
         registerItems();
@@ -66,15 +68,22 @@ public class MCDoom {
         }
     }
 
+    public String[] getWeaponIDs() {
+        return new String[]{ "bfg9000" };
+    }
+
     private WeaponDefinition loadWeapon(String id) {
-        String definitionFileLocation = "/assets/"+modid+"/weapons/"+id+".json";
-        Gson gson = new Gson(); // TODO: Avoid creating multiple instances
-        JsonObject object = gson.fromJson(new InputStreamReader(getClass().getResourceAsStream(definitionFileLocation)), JsonObject.class);
+        JsonObject object = readWeaponFile(id);
         WeaponDefinition definition = new WeaponDefinition();
         definition.setId(object.get("id").getAsString());
         definition.setCooldown(object.get("cooldown").getAsInt());
         definition.setPreFiringPause(object.get("preFiringPause").getAsInt());
         return definition;
+    }
+
+    public JsonObject readWeaponFile(String weaponID) {
+        String definitionFileLocation = "/assets/"+modid+"/weapons/"+weaponID+".json";
+        return gson.fromJson(new InputStreamReader(getClass().getResourceAsStream(definitionFileLocation)), JsonObject.class);
     }
 
     @Mod.EventHandler

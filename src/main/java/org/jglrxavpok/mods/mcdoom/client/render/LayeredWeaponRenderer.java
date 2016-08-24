@@ -27,12 +27,15 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
     private final static Comparator<WeaponLayer> layerComparator = new Comparator<WeaponLayer>() {
         @Override
         public int compare(WeaponLayer o1, WeaponLayer o2) {
-            return o1.getTexture().getResourcePath().compareTo(o2.getTexture().getResourcePath());
+            int locationComparison = o1.getTexture().getResourcePath().compareTo(o2.getTexture().getResourcePath());
+            if(locationComparison != 0)
+                return locationComparison;
+            return Double.compare(o1.getZLevelOffset(), o2.getZLevelOffset());
         }
     };
 
     private final List<WeaponLayer> layers;
-    private final Map<WeaponLayer, Predicate<Object>> layerPredicates;
+    private final Map<WeaponLayer, WeaponPredicate> layerPredicates;
 
     public LayeredWeaponRenderer() {
         layers = Lists.newArrayList();
@@ -41,6 +44,12 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
 
     @Override
     public void renderWeapon(EntityPlayer player, ItemStack currentItem, ScaledResolution resolution, float partialTicks) {
+        if(Minecraft.getMinecraft().gameSettings.keyBindSwapHands.isKeyDown()) {
+            Collections.sort(layers, layerComparator);
+            System.out.println("reordering!");
+            // TODO: remove
+        }
+
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
         EntityPlayer renderView = (EntityPlayer) Minecraft.getMinecraft().getRenderViewEntity();
@@ -53,8 +62,9 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
         ResourceLocation previousTexture = null;
         buffer.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
         TextureManager texManager = Minecraft.getMinecraft().getTextureManager();
+
         for (WeaponLayer l : layers) {
-            if(!layerPredicates.get(l).apply(null)) // TODO: Make an actual condition
+            if(!layerPredicates.get(l).apply(currentItem, player))
                 continue;
             if(previousTexture == null) {
                 texManager.bindTexture(l.getTexture());
@@ -66,8 +76,8 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
             }
 
             TextureRegion region = l.getRegion();
-            float w = 171f;
-            float h = 86f;
+            float w = (region.getMaxU()-region.getMinU()) * l.getTextureWidth();
+            float h = (region.getMaxV()-region.getMinV()) * l.getTextureHeight();
             float y = resolution.getScaledHeight()-h + l.getOffsetY();
             float x = resolution.getScaledWidth()/2f-w/2f + l.getOffsetX();
             int z = -900 + l.getZLevelOffset();
@@ -91,8 +101,7 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
         tessellator.draw();
     }
 
-    // TODO: Change from Predicate<Object>
-    public void addLayer(Predicate<Object> predicate, WeaponLayer layer) {
+    public void addLayer(WeaponPredicate predicate, WeaponLayer layer) {
         layers.add(layer);
         layerPredicates.put(layer, predicate);
 
@@ -106,14 +115,26 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
         private final int offsetX;
         private final int offsetY;
         private final int zLevelOffset;
+        private final float texW;
+        private final float texH;
 
-        public WeaponLayer(boolean bobbing, ResourceLocation texture, TextureRegion region, int offsetX, int offsetY, int zLevelOffset) {
+        public WeaponLayer(boolean bobbing, ResourceLocation texture, TextureRegion region, int offsetX, int offsetY, int zLevelOffset, float texW, float texH) {
             this.bobbing = bobbing;
             this.texture = texture;
             this.region = region;
             this.offsetX = offsetX;
             this.offsetY = offsetY;
             this.zLevelOffset = zLevelOffset;
+            this.texW = texW;
+            this.texH = texH;
+        }
+
+        public float getTextureWidth() {
+            return texW;
+        }
+
+        public float getTextureHeight() {
+            return texH;
         }
 
         public boolean isBobbing() {

@@ -1,12 +1,15 @@
 package org.jglrxavpok.mods.mcdoom.client.render;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,12 +80,12 @@ public class WeaponRendererLoader {
             if(layerObject.has("zPriority")) {
                 zLevelOffset = layerObject.get("zPriority").getAsInt();
             }
-            ResourceLocation texture = new ResourceLocation(MCDoom.modid, "textures/"+textureFiles.get(regionTextures.get(regionID)));
-            if(condition.equalsIgnoreCase("state=idle")) {
-                renderer.addLayer(Predicates.alwaysTrue(), new LayeredWeaponRenderer.WeaponLayer(bobbing, texture, region, offsetX, offsetY, zLevelOffset));
-            } else {
-                // TODO: handle conditional layers
-            }
+            String texture = regionTextures.get(regionID);
+            float textureWidth = textureWidths.get(texture);
+            float textureHeight = textureHeights.get(texture);
+            ResourceLocation textureLocation = new ResourceLocation(MCDoom.modid, "textures/"+textureFiles.get(regionTextures.get(regionID)));
+            WeaponPredicate predicate = WeaponPredicate.createFromString(condition);
+            renderer.addLayer(predicate, new LayeredWeaponRenderer.WeaponLayer(bobbing, textureLocation, region, offsetX, offsetY, zLevelOffset, textureWidth, textureHeight));
         }
 
 

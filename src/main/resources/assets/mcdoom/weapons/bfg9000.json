@@ -1,7 +1,8 @@
 {
   "id": "bfg9000",
   "cooldown": 100,
-  "preFiringPause": 25,
+  "triggerDelay": 25,
+  "ammoType": "bfg",
   "render": {
     "textures": [
       {
@@ -17,13 +18,55 @@
         "id": "idle",
         "texture": "bfgsheet",
         "region": [0, 77, 171, 163]
+      },
+      {
+        "id": "redlights",
+        "texture": "bfgsheet",
+        "region": [173, 77, 344, 163]
+      },
+      {
+        "id": "firing",
+        "texture": "bfgsheet",
+        "region": [345, 77, 502, 163]
+      },
+      {
+        "id": "muzzleFlashSmall",
+        "texture": "bfgsheet",
+        "region": [0,0,82,77]
+      },
+      {
+        "id": "muzzleFlashBig",
+        "texture": "bfgsheet",
+        "region": [82,0,221,77]
       }
     ],
 
     "layers": [
       {
-        "condition": "state=idle",
-        "region": "idle"
+        "condition": "preFiringPercent < 0.9",
+        "region": "idle",
+        "zPriority": 0
+      },
+      {
+        "condition": "(time / 4 % 2 = 0) && state=cooling_down",
+        "region": "redlights",
+        "zPriority": 1
+      },
+      {
+        "condition": "triggerDelay >= 0.9",
+        "region": "firing"
+      },
+      {
+        "condition": "triggerDelay >= 0.7 && triggerDelay < 0.8",
+        "region": "muzzleFlashSmall",
+        "offset": [0,-47],
+        "zPriority" : -1
+      },
+      {
+        "condition": "triggerDelay >= 0.8 && triggerDelay < 0.9",
+        "region": "muzzleFlashBig",
+        "offset": [0,-47],
+        "zPriority" : -1
       }
     ]
   }

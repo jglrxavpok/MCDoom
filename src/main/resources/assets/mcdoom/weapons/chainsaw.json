@@ -1,0 +1,68 @@
+{
+  "id": "chainsaw",
+  "cooldown": 10,
+  "triggerDelay": 0,
+  "ammoType": "fuel",
+  "weaponType": "melee",
+  "baseDamage": 40,
+  "render": {
+    "textures": [
+      {
+        "file": "hud/chainsawsheet.png",
+        "id": "chainsaw",
+        "width": 449,
+        "height": 111
+      }
+    ],
+
+    "regions": [
+      {
+        "id": "vibrating0",
+        "texture": "chainsaw",
+        "region": [0, 0, 153, 89]
+      },
+      {
+        "id": "vibrating1",
+        "texture": "chainsaw",
+        "region": [154, 0, 307, 89]
+      },
+      {
+        "id": "using0",
+        "texture": "chainsaw",
+        "region": [309, 0, 449, 55]
+      },
+      {
+        "id": "using1",
+        "texture": "chainsaw",
+        "region": [309, 56, 449, 110]
+      }
+    ],
+
+    "layers": [
+      {
+        "condition": "frame % 2 == 0 && not(rightClick)",
+        "region": "vibrating0",
+        "zPriority": 0,
+        "offset": [0, -15]
+      },
+      {
+        "condition": "frame % 2 != 0 && not(rightClick)",
+        "region": "vibrating1",
+        "zPriority": 0,
+        "offset": [0, -15]
+      },
+      {
+        "condition": "frame % 2 == 0 && rightClick",
+        "region": "using0",
+        "zPriority": 0,
+        "offset": [0, -15]
+      },
+      {
+        "condition": "frame % 2 != 0 && rightClick",
+        "region": "using1",
+        "zPriority": 0,
+        "offset": [0, -15]
+      }
+    ]
+  }
+}

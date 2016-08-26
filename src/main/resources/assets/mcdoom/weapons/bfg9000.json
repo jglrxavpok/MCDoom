@@ -3,6 +3,8 @@
   "cooldown": 100,
   "triggerDelay": 25,
   "ammoType": "bfg",
+  "weaponType": "projectile",
+  "baseDamage": 50,
   "render": {
     "textures": [
       {
@@ -43,7 +45,7 @@
 
     "layers": [
       {
-        "condition": "preFiringPercent < 0.9",
+        "condition": "triggerDelay < 0.9",
         "region": "idle",
         "zPriority": 0
       },

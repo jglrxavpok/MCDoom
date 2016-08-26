@@ -18,6 +18,7 @@ import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomWeaponUpdater;
 import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
 import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
+import org.jglrxavpok.mods.mcdoom.common.weapons.EnumWeaponType;
 import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 
 import java.io.InputStreamReader;
@@ -37,16 +38,19 @@ public class MCDoom {
     @SidedProxy(clientSide = "org.jglrxavpok.mods.mcdoom.client.MCDoomClientProxy", serverSide = "org.jglrxavpok.mods.mcdoom.server.MCDoomServerProxy")
     public static MCDoomProxy proxy;
     private Gson gson;
+    private WeaponItem chainsaw;
+    private WeaponItem funChainsaw;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         gson = new Gson();
         bfg = new WeaponItem(loadWeapon("bfg9000"));
         funBFG = new FunWeaponItem(loadWeapon("bfg9000"));
-        registerItems();
 
-        GameRegistry.register(bfg);
-        GameRegistry.register(funBFG);
+        chainsaw = new WeaponItem(loadWeapon("chainsaw"));
+        funChainsaw = new FunWeaponItem(loadWeapon("chainsaw"));
+
+        registerItems();
         EntityRegistry.registerModEntity(PlasmaBallEntity.class, "plasma_ball", 0, this, 64, 20, true);
 
         proxy.preInit(evt);
@@ -61,6 +65,7 @@ public class MCDoom {
                 try {
                     Item item = (Item) f.get(this);
                     item.setRegistryName(modid, item.getUnlocalizedName());
+                    GameRegistry.register(item);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -69,7 +74,7 @@ public class MCDoom {
     }
 
     public String[] getWeaponIDs() {
-        return new String[]{ "bfg9000" };
+        return new String[]{ "bfg9000", "chainsaw" };
     }
 
     private WeaponDefinition loadWeapon(String id) {
@@ -79,6 +84,8 @@ public class MCDoom {
         definition.setCooldown(object.get("cooldown").getAsInt());
         definition.setPreFiringPause(object.get("triggerDelay").getAsInt());
         definition.setAmmoType(object.get("ammoType").getAsString());
+        definition.setBaseDamage(object.get("baseDamage").getAsInt());
+        definition.setWeaponType(EnumWeaponType.valueOf(object.get("weaponType").getAsString().toUpperCase()));
         return definition;
     }
 

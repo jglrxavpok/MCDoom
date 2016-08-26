@@ -1,6 +1,7 @@
 package org.jglrxavpok.mods.mcdoom.client.render;
 
 import com.udojava.evalex.Expression;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.jglrxavpok.mods.mcdoom.common.weapons.EnumWeaponStates;
@@ -11,21 +12,25 @@ public abstract class WeaponPredicate {
 
     public static final WeaponPredicate ALWAYS_TRUE = new WeaponPredicate() {
         @Override
-        public boolean apply(ItemStack currentItem, EntityPlayer player) {
+        public boolean apply(ItemStack currentItem, EntityPlayer player, int frame) {
             return true;
         }
     };
 
-    public abstract boolean apply(ItemStack currentItem, EntityPlayer player);
+    public abstract boolean apply(ItemStack currentItem, EntityPlayer player, int frame);
 
     public static WeaponPredicate createFromString(String condition) {
+        if(condition.equalsIgnoreCase("always"))
+            return ALWAYS_TRUE;
         final Expression expression = new Expression(condition);
         for (EnumWeaponStates state : EnumWeaponStates.values()) {
-            expression.setVariable(state.name().toLowerCase(), new BigDecimal(state.ordinal()));
+            expression.setVariable(state.name().toLowerCase(), BigDecimal.valueOf(state.ordinal()));
         }
+        // MAYBE TODO: Cache BigDecimal values
         return new WeaponPredicate() {
             @Override
-            public boolean apply(ItemStack currentItem, EntityPlayer player) {
+            public boolean apply(ItemStack currentItem, EntityPlayer player, int frame) {
+                boolean rightClick = Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown();
                 EnumWeaponStates state = EnumWeaponStates.IDLE;
                 int preFiringTick = 0;
                 float preFiringPercent = 0f;
@@ -40,11 +45,13 @@ public abstract class WeaponPredicate {
                     if(Float.isInfinite(preFiringPercent) || Float.isNaN(preFiringPercent))
                         preFiringPercent = 0f;
                 }
-                expression.setVariable("time", new BigDecimal(player.getEntityWorld().getTotalWorldTime()));
-                expression.setVariable("cooldown", new BigDecimal(currentItem.getItemDamage()));
-                expression.setVariable("state", new BigDecimal(state.ordinal()));
-                expression.setVariable("triggerDelayTick", new BigDecimal(preFiringTick));
-                expression.setVariable("triggerDelay", new BigDecimal(preFiringPercent));
+                expression.setVariable("time", BigDecimal.valueOf(player.getEntityWorld().getTotalWorldTime()));
+                expression.setVariable("cooldown", BigDecimal.valueOf(currentItem.getItemDamage()));
+                expression.setVariable("state", BigDecimal.valueOf(state.ordinal()));
+                expression.setVariable("triggerDelayTick", BigDecimal.valueOf(preFiringTick));
+                expression.setVariable("triggerDelay", BigDecimal.valueOf(preFiringPercent));
+                expression.setVariable("rightClick", rightClick ? BigDecimal.ONE : BigDecimal.ZERO);
+                expression.setVariable("frame", BigDecimal.valueOf(frame));
                 return !expression.eval().equals(BigDecimal.ZERO);
             }
         };

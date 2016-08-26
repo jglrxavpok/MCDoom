@@ -36,6 +36,7 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
 
     private final List<WeaponLayer> layers;
     private final Map<WeaponLayer, WeaponPredicate> layerPredicates;
+    private int frame;
 
     public LayeredWeaponRenderer() {
         layers = Lists.newArrayList();
@@ -44,6 +45,7 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
 
     @Override
     public void renderWeapon(EntityPlayer player, ItemStack currentItem, ScaledResolution resolution, float partialTicks) {
+        frame++;
         if(Minecraft.getMinecraft().gameSettings.keyBindSwapHands.isKeyDown()) {
             Collections.sort(layers, layerComparator);
             System.out.println("reordering!");
@@ -64,7 +66,7 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
         TextureManager texManager = Minecraft.getMinecraft().getTextureManager();
 
         for (WeaponLayer l : layers) {
-            if(!layerPredicates.get(l).apply(currentItem, player))
+            if(!layerPredicates.get(l).apply(currentItem, player, frame))
                 continue;
             if(previousTexture == null) {
                 texManager.bindTexture(l.getTexture());

@@ -6,6 +6,8 @@ public class WeaponDefinition {
     private int preFiringPause;
     private String id;
     private String ammoType;
+    private EnumWeaponType weaponType;
+    private int baseDamage;
 
     public WeaponDefinition() {
 
@@ -41,5 +43,21 @@ public class WeaponDefinition {
 
     public String getAmmoType() {
         return ammoType;
+    }
+
+    public void setWeaponType(EnumWeaponType weaponType) {
+        this.weaponType = weaponType;
+    }
+
+    public EnumWeaponType getWeaponType() {
+        return weaponType;
+    }
+
+    public void setBaseDamage(int baseDamage) {
+        this.baseDamage = baseDamage;
+    }
+
+    public int getBaseDamage() {
+        return baseDamage;
     }
 }

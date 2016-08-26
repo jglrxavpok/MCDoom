@@ -19,7 +19,7 @@ public class FunWeaponItem extends WeaponItem {
 
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
+        return 0;
     }
 
     @Override

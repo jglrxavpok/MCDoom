@@ -78,6 +78,7 @@ public class MCDoom {
         definition.setId(object.get("id").getAsString());
         definition.setCooldown(object.get("cooldown").getAsInt());
         definition.setPreFiringPause(object.get("triggerDelay").getAsInt());
+        definition.setAmmoType(object.get("ammoType").getAsString());
         return definition;
     }
 

@@ -5,6 +5,7 @@ public class WeaponDefinition {
     private int cooldown;
     private int preFiringPause;
     private String id;
+    private String ammoType;
 
     public WeaponDefinition() {
 
@@ -32,5 +33,13 @@ public class WeaponDefinition {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setAmmoType(String ammoType) {
+        this.ammoType = ammoType;
+    }
+
+    public String getAmmoType() {
+        return ammoType;
     }
 }

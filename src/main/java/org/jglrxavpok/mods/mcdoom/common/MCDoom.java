@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -40,6 +42,8 @@ public class MCDoom {
     private Gson gson;
     private WeaponItem chainsaw;
     private WeaponItem funChainsaw;
+    public SoundEvent chainsawUp;
+    public SoundEvent chainsawIdle;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
@@ -53,9 +57,19 @@ public class MCDoom {
         registerItems();
         EntityRegistry.registerModEntity(PlasmaBallEntity.class, "plasma_ball", 0, this, 64, 20, true);
 
+        loadSounds();
         proxy.preInit(evt);
 
         MinecraftForge.EVENT_BUS.register(new MCDoomWeaponUpdater());
+    }
+
+    public void loadSounds() {
+        chainsawUp = registerSound(new ResourceLocation(MCDoom.modid, "chainsaw.up"));
+        chainsawIdle = registerSound(new ResourceLocation(MCDoom.modid, "chainsaw.idle"));
+    }
+
+    private SoundEvent registerSound(ResourceLocation location) {
+        return GameRegistry.register(new SoundEvent(location).setRegistryName(location));
     }
 
     private void registerItems() {

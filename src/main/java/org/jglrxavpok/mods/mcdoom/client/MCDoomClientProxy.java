@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.client.eventhandlers.MCDoomScreenEvents;
+import org.jglrxavpok.mods.mcdoom.client.eventhandlers.MCDoomSoundEvents;
 import org.jglrxavpok.mods.mcdoom.client.render.RenderPlasmaBall;
 import org.jglrxavpok.mods.mcdoom.client.render.WeaponRenderer;
 import org.jglrxavpok.mods.mcdoom.client.render.WeaponRendererLoader;
@@ -33,17 +34,20 @@ public class MCDoomClientProxy extends MCDoomProxy {
 
     private final MCDoomScreenEvents screenEventHandler;
     private final WeaponRendererLoader weaponRendererLoader;
+    private final MCDoomSoundEvents soundEventsHandler;
     private Map<String, WeaponRenderer> renderers;
 
     public MCDoomClientProxy() {
         renderers = Maps.newHashMap();
         screenEventHandler = new MCDoomScreenEvents(this);
+        soundEventsHandler = new MCDoomSoundEvents();
         weaponRendererLoader = new WeaponRendererLoader();
     }
 
     @Override
     public void preInit(FMLPreInitializationEvent evt) {
         MinecraftForge.EVENT_BUS.register(screenEventHandler);
+        MinecraftForge.EVENT_BUS.register(soundEventsHandler);
         registerItems();
 
         RenderingRegistry.registerEntityRenderingHandler(PlasmaBallEntity.class, new IRenderFactory<PlasmaBallEntity>() {

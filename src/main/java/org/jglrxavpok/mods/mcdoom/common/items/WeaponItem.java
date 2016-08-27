@@ -71,7 +71,7 @@ public class WeaponItem extends Item {
                             return input != shooter;
                         }
                     });
-                    if(raycast != null && raycast.typeOfHit == RayTraceResult.Type.ENTITY) {
+                    if(raycast != null && raycast.typeOfHit == RayTraceResult.Type.ENTITY && raycast.entityHit instanceof EntityLivingBase) {
                         raycast.entityHit.attackEntityFrom(DamageSource.generic, definition.getBaseDamage());
                     }
                     break;

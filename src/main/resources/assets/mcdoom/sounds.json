@@ -1,0 +1,10 @@
+{
+  "chainsaw.up": {
+    "category": "player",
+    "sounds": ["mcdoom:weapons/chainsaw_up"]
+  },
+  "chainsaw.idle": {
+    "category": "player",
+    "sounds": ["mcdoom:weapons/chainsaw_idle"]
+  }
+}

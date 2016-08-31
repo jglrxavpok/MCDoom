@@ -9,12 +9,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 import org.jglrxavpok.mods.mcdoom.common.utils.MathUtils;
 import org.jglrxavpok.mods.mcdoom.common.weapons.EnumWeaponType;
@@ -53,11 +51,11 @@ public class WeaponItem extends Item {
     }
 
     private void fire(World world, final EntityLivingBase shooter) {
-        // TODO: Change method depending on weapon
         if(!world.isRemote) {
             float raycastDistance = 2000f; // 2000 blocks across
             switch (definition.getWeaponType()) {
                 case PROJECTILE:
+                    // TODO: Change method depending on weapon
                     PlasmaBallEntity entity = new PlasmaBallEntity(world, shooter);
                     world.spawnEntityInWorld(entity);
                     break;
@@ -71,8 +69,11 @@ public class WeaponItem extends Item {
                             return input != shooter;
                         }
                     });
-                    if(raycast != null && raycast.typeOfHit == RayTraceResult.Type.ENTITY && raycast.entityHit instanceof EntityLivingBase) {
-                        raycast.entityHit.attackEntityFrom(DamageSource.generic, definition.getBaseDamage());
+                    if(raycast != null) {
+                        if(raycast.typeOfHit == RayTraceResult.Type.ENTITY && raycast.entityHit instanceof EntityLivingBase) {
+                            raycast.entityHit.attackEntityFrom(DamageSource.generic, definition.getBaseDamage());
+                            world.playSound(shooter.posX, shooter.posY, shooter.posZ, MCDoom.instance.chainsawHit, SoundCategory.PLAYERS, 1, 1, false);
+                        }
                     }
                     break;
             }

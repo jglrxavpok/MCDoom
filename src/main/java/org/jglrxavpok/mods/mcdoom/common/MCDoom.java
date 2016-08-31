@@ -44,6 +44,8 @@ public class MCDoom {
     private WeaponItem funChainsaw;
     public SoundEvent chainsawUp;
     public SoundEvent chainsawIdle;
+    public SoundEvent chainsawHit;
+    public SoundEvent chainsawFull;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
@@ -66,6 +68,8 @@ public class MCDoom {
     public void loadSounds() {
         chainsawUp = registerSound(new ResourceLocation(MCDoom.modid, "chainsaw.up"));
         chainsawIdle = registerSound(new ResourceLocation(MCDoom.modid, "chainsaw.idle"));
+        chainsawFull = registerSound(new ResourceLocation(MCDoom.modid, "chainsaw.full"));
+        chainsawHit = registerSound(new ResourceLocation(MCDoom.modid, "chainsaw.hit"));
     }
 
     private SoundEvent registerSound(ResourceLocation location) {

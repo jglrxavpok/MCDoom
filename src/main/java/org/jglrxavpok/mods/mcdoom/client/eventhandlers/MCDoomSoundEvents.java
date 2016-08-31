@@ -31,7 +31,12 @@ public class MCDoomSoundEvents {
     public void onClientTick(LivingEvent.LivingUpdateEvent evt) {
         if(evt.getEntityLiving() == Minecraft.getMinecraft().getRenderViewEntity()) {
             if(evt.getEntityLiving() instanceof EntityPlayer) {
+                boolean rightClick = Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown();
                 EntityPlayer player = ((EntityPlayer) evt.getEntityLiving());
+                if(Minecraft.getMinecraft().gameSettings.keyBindUseItem.isPressed()) {
+                    player.getEntityWorld().playSound(player, player.posX, player.posY, player.posZ, MCDoom.instance.chainsawUp, SoundCategory.PLAYERS, 1, 1f);
+                    soundCooldown = 6;
+                }
                 ItemStack stack = player.inventory.getCurrentItem();
 
                 if(soundCooldown > 0) {
@@ -42,8 +47,14 @@ public class MCDoomSoundEvents {
                     if(stack.getItem() instanceof WeaponItem) {
                         if(((WeaponItem) stack.getItem()).getDefinition().getId().equals("chainsaw")) {
                             if(soundCooldown == 0) {
-                                evt.getEntityLiving().getEntityWorld().playSound(player, player.posX, player.posY, player.posZ, MCDoom.instance.chainsawIdle, SoundCategory.PLAYERS, 1, 1);
-                                soundCooldown = 5;
+                                float pitch = (float) (Math.random()*0.1f+0.9f);
+                                if(rightClick) {
+                                    player.getEntityWorld().playSound(player, player.posX, player.posY, player.posZ, MCDoom.instance.chainsawFull, SoundCategory.PLAYERS, 1, pitch);
+                                    soundCooldown = 8;
+                                } else {
+                                    player.getEntityWorld().playSound(player, player.posX, player.posY, player.posZ, MCDoom.instance.chainsawIdle, SoundCategory.PLAYERS, 1, pitch);
+                                    soundCooldown = 4;
+                                }
                             }
                         }
                     }

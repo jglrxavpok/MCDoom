@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 public abstract class WeaponRenderer {
 
-    public abstract void renderWeapon(EntityPlayer player, ItemStack currentItem, ScaledResolution resolution, float partialTicks);
+    public abstract void renderWeapon(EntityPlayer player, ItemStack currentItem, ScaledResolution resolution, float partialTicks, float verticalOffset);
 
     protected float getBobbingX(Entity renderView, float partialTicks) {
         float walkedDistance = renderView.distanceWalkedModified - renderView.prevDistanceWalkedModified;

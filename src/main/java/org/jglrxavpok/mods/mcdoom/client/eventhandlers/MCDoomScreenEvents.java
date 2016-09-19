@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.client.MCDoomClientProxy;
+import org.jglrxavpok.mods.mcdoom.client.render.DoomHUDRenderer;
 import org.jglrxavpok.mods.mcdoom.client.render.TextureRegion;
 import org.jglrxavpok.mods.mcdoom.client.render.WeaponRenderer;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
@@ -28,9 +29,11 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class MCDoomScreenEvents {
 
     private final MCDoomClientProxy proxy;
+    private DoomHUDRenderer hudRenderer;
 
     public MCDoomScreenEvents(MCDoomClientProxy proxy) {
         this.proxy = proxy;
+        hudRenderer = new DoomHUDRenderer();
     }
 
     @SubscribeEvent
@@ -50,16 +53,39 @@ public class MCDoomScreenEvents {
     @SubscribeEvent
     public void onGuiDrawing(RenderGameOverlayEvent.Pre evt) {
         Minecraft mc = Minecraft.getMinecraft();
-        if(evt.getType() == RenderGameOverlayEvent.ElementType.HOTBAR && mc.gameSettings.thirdPersonView == 0) {
-            Entity e = mc.getRenderViewEntity();
-            if(e instanceof EntityPlayer) {
-                ItemStack currentItem = ((EntityPlayer) e).inventory.getCurrentItem();
-                if(currentItem != null && currentItem.getItem() != null) {
-                    Item actualItem = currentItem.getItem();
-                    if(actualItem instanceof WeaponItem) {
-                        WeaponRenderer renderer = proxy.getRenderer(((WeaponItem) actualItem).getDefinition().getId());
-                        if(renderer != null)
-                            renderer.renderWeapon((EntityPlayer)e, currentItem, evt.getResolution(), evt.getPartialTicks());
+        float verticalOffset = 0;
+        if (evt.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
+            if (MCDoom.instance.isDoomUIEnabled()) {
+                verticalOffset = hudRenderer.draw(evt.getResolution(), evt.getPartialTicks());
+                evt.setCanceled(true);
+            }
+
+            if (mc.gameSettings.thirdPersonView == 0) {
+                renderWeapon(mc, evt.getResolution(), evt.getPartialTicks(), -verticalOffset);
+            }
+        }
+
+        if (MCDoom.instance.isDoomUIEnabled()) {
+            switch (evt.getType()) {
+                case ARMOR:
+                case EXPERIENCE:
+                case HEALTH:
+                case HOTBAR:
+                    evt.setCanceled(true);
+            }
+        }
+    }
+
+    private void renderWeapon(Minecraft mc, ScaledResolution resolution, float partialTicks, float verticalOffset) {
+        Entity e = mc.getRenderViewEntity();
+        if(e instanceof EntityPlayer) {
+            ItemStack currentItem = ((EntityPlayer) e).inventory.getCurrentItem();
+            if(currentItem != null && currentItem.getItem() != null) {
+                Item actualItem = currentItem.getItem();
+                if(actualItem instanceof WeaponItem) {
+                    WeaponRenderer renderer = proxy.getRenderer(((WeaponItem) actualItem).getDefinition().getId());
+                    if(renderer != null) {
+                        renderer.renderWeapon((EntityPlayer)e, currentItem, resolution, partialTicks, verticalOffset);
                     }
                 }
             }

@@ -32,7 +32,7 @@ public class BasicWeaponRenderer extends WeaponRenderer {
     }
 
     @Override
-    public void renderWeapon(EntityPlayer player, ItemStack currentItem, ScaledResolution resolution, float partialTicks) {
+    public void renderWeapon(EntityPlayer player, ItemStack currentItem, ScaledResolution resolution, float partialTicks, float verticalOffset) {
         // TODO: Remove old code from BFG renderer
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();

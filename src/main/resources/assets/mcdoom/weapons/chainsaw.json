@@ -43,25 +43,25 @@
         "condition": "frame % 2 == 0 && not(rightClick)",
         "region": "vibrating0",
         "zPriority": 0,
-        "offset": [0, -15]
+        "offset": [0, 0]
       },
       {
         "condition": "frame % 2 != 0 && not(rightClick)",
         "region": "vibrating1",
         "zPriority": 0,
-        "offset": [0, -15]
+        "offset": [0, 0]
       },
       {
         "condition": "frame % 2 == 0 && rightClick",
         "region": "using0",
         "zPriority": 0,
-        "offset": [0, -15]
+        "offset": [0, 0]
       },
       {
         "condition": "frame % 2 != 0 && rightClick",
         "region": "using1",
         "zPriority": 0,
-        "offset": [0, -15]
+        "offset": [0, 0]
       }
     ]
   }

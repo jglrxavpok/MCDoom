@@ -34,28 +34,18 @@ public class MCDoom {
     @Mod.Instance(modid)
     public static MCDoom instance;
 
-    private WeaponItem bfg;
-    private WeaponItem funBFG;
-
     @SidedProxy(clientSide = "org.jglrxavpok.mods.mcdoom.client.MCDoomClientProxy", serverSide = "org.jglrxavpok.mods.mcdoom.server.MCDoomServerProxy")
     public static MCDoomProxy proxy;
     private Gson gson;
-    private WeaponItem chainsaw;
-    private WeaponItem funChainsaw;
     public SoundEvent chainsawUp;
     public SoundEvent chainsawIdle;
     public SoundEvent chainsawHit;
     public SoundEvent chainsawFull;
+    private boolean doomUIEnabled;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         gson = new Gson();
-        bfg = new WeaponItem(loadWeapon("bfg9000"));
-        funBFG = new FunWeaponItem(loadWeapon("bfg9000"));
-
-        chainsaw = new WeaponItem(loadWeapon("chainsaw"));
-        funChainsaw = new FunWeaponItem(loadWeapon("chainsaw"));
-
         registerItems();
         EntityRegistry.registerModEntity(PlasmaBallEntity.class, "plasma_ball", 0, this, 64, 20, true);
 
@@ -77,17 +67,16 @@ public class MCDoom {
     }
 
     private void registerItems() {
-        Field[] fields = getClass().getDeclaredFields();
-        for(Field f : fields) {
-            if(Item.class.isAssignableFrom(f.getType())) {
-                try {
-                    Item item = (Item) f.get(this);
-                    item.setRegistryName(modid, item.getUnlocalizedName());
-                    GameRegistry.register(item);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
+        for(String id : getWeaponIDs()) {
+            WeaponDefinition definition = loadWeapon(id);
+            Item weapon = new WeaponItem(definition);
+            Item funVersion = new FunWeaponItem(definition);
+
+            weapon.setRegistryName(modid, definition.getId());
+            GameRegistry.register(weapon);
+
+            funVersion.setRegistryName(modid, "fun_"+definition.getId());
+            GameRegistry.register(funVersion);
         }
     }
 
@@ -120,5 +109,10 @@ public class MCDoom {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt) {
         proxy.postInit(evt);
+    }
+
+    public boolean isDoomUIEnabled() {
+        // TODO: return doomUIEnabled;
+        return true;
     }
 }

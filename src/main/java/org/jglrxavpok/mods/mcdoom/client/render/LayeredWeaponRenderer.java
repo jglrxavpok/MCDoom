@@ -1,16 +1,13 @@
 package org.jglrxavpok.mods.mcdoom.client.render;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -44,7 +41,7 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
     }
 
     @Override
-    public void renderWeapon(EntityPlayer player, ItemStack currentItem, ScaledResolution resolution, float partialTicks) {
+    public void renderWeapon(EntityPlayer player, ItemStack currentItem, ScaledResolution resolution, float partialTicks, float verticalOffset) {
         frame++;
         if(Minecraft.getMinecraft().gameSettings.keyBindSwapHands.isKeyDown()) {
             Collections.sort(layers, layerComparator);
@@ -80,7 +77,7 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
             TextureRegion region = l.getRegion();
             float w = (region.getMaxU()-region.getMinU()) * l.getTextureWidth();
             float h = (region.getMaxV()-region.getMinV()) * l.getTextureHeight();
-            float y = resolution.getScaledHeight()-h + l.getOffsetY();
+            float y = resolution.getScaledHeight()-h + l.getOffsetY() + verticalOffset;
             float x = resolution.getScaledWidth()/2f-w/2f + l.getOffsetX();
             int z = -900 + l.getZLevelOffset();
             if(l.isBobbing()) {

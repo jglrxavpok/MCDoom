@@ -3,15 +3,21 @@ package org.jglrxavpok.mods.mcdoom.client.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.model.ModelPlayer;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.layers.LayerCustomHead;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.lwjgl.opengl.GL11;
+
+import java.util.Arrays;
 
 @SideOnly(Side.CLIENT)
 public class DoomHUDRenderer {
@@ -21,10 +27,14 @@ public class DoomHUDRenderer {
     private final static int[] bigFontCharWidth = {16,12,15,15,15,15,15,15,15,15,14};
     private final static int[] bigFontCharX = {0,16,28,43,58,73,88,103,118,133,148};
     private final ResourceLocation bigFontLocation;
+    private final ResourceLocation inventoryFontLocation;
+    private final ModelPlayer playerModel;
 
     public DoomHUDRenderer() {
         hudLocation = new ResourceLocation(MCDoom.modid, "textures/hud/doomHUD.png");
         bigFontLocation = new ResourceLocation(MCDoom.modid, "textures/hud/bigFont.png");
+        inventoryFontLocation = new ResourceLocation(MCDoom.modid, "textures/hud/invFont.png");
+        playerModel = new ModelPlayer(1, false);
     }
 
     public float draw(ScaledResolution resolution, float partialTicks) {
@@ -35,7 +45,7 @@ public class DoomHUDRenderer {
         float screenW = resolution.getScaledWidth();
         float screenH = resolution.getScaledHeight();
         float w = screenW;
-        float yScale = (screenW/320f);
+        float yScale = (screenW/262f);
         float h = 32f*yScale;
         float y = screenH-h;
         Tessellator tessellator = Tessellator.getInstance();
@@ -53,16 +63,121 @@ public class DoomHUDRenderer {
 
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
         int health = (int) (player.getHealth()/player.getMaxHealth() * 100f);
-        float healthX = 103f-getTextWidth(health+"%")*0.9f;
+        float healthX = 102f-getTextWidth(health+"%")*0.9f;
         float healthY = 25;
         renderPercentage(health, healthX*yScale, screenH-healthY*yScale, yScale*.9f);
 
         int armor = (int) (player.getTotalArmorValue()*10);
-        float armorX = 235f-getTextWidth(armor+"")*0.9f;
+        float armorX = 198f-getTextWidth(armor+"")*0.9f;
         float armorY = 25;
         renderText(""+armor, armorX*yScale, screenH-armorY*yScale, yScale*.9f);
 
+//        renderPlayerHead(screenW, screenH, yScale);
+
+        renderInventory(player, screenW, screenH, yScale);
+
         return h;
+    }
+
+    private void renderInventory(EntityPlayerSP player, float screenW, float screenH, float yScale) {
+        Minecraft mc = Minecraft.getMinecraft();
+        TextureManager textureManager = mc.renderEngine;
+
+        Tessellator tessellator = Tessellator.getInstance();
+        VertexBuffer buffer = tessellator.getBuffer();
+
+        textureManager.bindTexture(inventoryFontLocation);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+
+        for (int i = 0; i < 9; i++) {
+            ItemStack stack = player.inventory.mainInventory[i];
+            if(stack != null) {
+                final float singleCharW = 4f;
+                boolean equipped = stack == player.inventory.getCurrentItem();
+                float minU = Math.min(1, ((singleCharW+1)*(i+1))/(49f));
+                float maxU = Math.min(1, minU+(singleCharW/49f));
+                float minV = 0f;
+                float maxV = 6f/(13f);
+
+                if(equipped) {
+                    minV = 7f/(13f);
+                    maxV = 1f;
+                }
+
+                float y = screenH-yScale*(17f + ((i % 5 >= i) ? 10f : 0));
+                float w = singleCharW*yScale;
+                float h = 6f*yScale;
+                float x = yScale*(204f + (i % 5)*(12f) +2f);
+                buffer.pos(x,y+h,0).tex(minU,maxV).endVertex();
+                buffer.pos(x+w,y+h,0).tex(maxU,maxV).endVertex();
+                buffer.pos(x+w,y,0).tex(maxU,minV).endVertex();
+                buffer.pos(x,y,0).tex(minU,minV).endVertex();
+            }
+        }
+
+        if(!isOffHandEmpty(player)) { // something in off hand inventory
+            float minU = 0f;
+            float maxU = 4f/49f;
+            float minV = 0f;
+            float maxV = 6f/(13f);
+
+            float y = screenH-yScale*(17f);
+            float w = 4f*yScale;
+            float h = 6f*yScale;
+            float x = yScale*(204f+12f*4f +2f);
+
+            buffer.pos(x,y+h,0).tex(minU,maxV).endVertex();
+            buffer.pos(x+w,y+h,0).tex(maxU,maxV).endVertex();
+            buffer.pos(x+w,y,0).tex(maxU,minV).endVertex();
+            buffer.pos(x,y,0).tex(minU,minV).endVertex();
+        }
+
+        tessellator.draw();
+    }
+
+    private void renderPlayerHead(float screenW, float screenH, float yScale) {
+        GlStateManager.enableColorMaterial();
+        GlStateManager.pushMatrix();
+        float posX = screenW/2f;
+        float posY = screenH/2f;
+        float scale = 10f;
+        float mouseX = 0f;
+        float mouseY = 0f;
+        EntityPlayer ent = Minecraft.getMinecraft().thePlayer;
+        GlStateManager.translate((float)posX, (float)posY, 50.0F);
+        GlStateManager.scale((float)(-scale), (float)scale, (float)scale);
+        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+        float f = ent.renderYawOffset;
+        float f1 = ent.rotationYaw;
+        float f2 = ent.rotationPitch;
+        float f3 = ent.prevRotationYawHead;
+        float f4 = ent.rotationYawHead;
+        GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(-((float)Math.atan((double)(mouseY / 40.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
+        ent.limbSwing = 0;
+        ent.limbSwingAmount = 0;
+        ent.renderYawOffset = 0;
+        ent.rotationYaw = 0;
+        ent.rotationPitch = 0;
+        ent.rotationYawHead = 0;
+        ent.prevRotationYawHead = ent.rotationYaw;
+        RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+        rendermanager.setPlayerViewY(180.0F);
+        rendermanager.setRenderShadow(false);
+        rendermanager.doRenderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
+        ent.renderYawOffset = f;
+        ent.rotationYaw = f1;
+        ent.rotationPitch = f2;
+        ent.prevRotationYawHead = f3;
+        ent.rotationYawHead = f4;
+        GlStateManager.popMatrix();
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GlStateManager.disableTexture2D();
+        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
     private void renderPercentage(int number, float x, float y, float scale) {
@@ -115,5 +230,13 @@ public class DoomHUDRenderer {
         buffer.pos(x+w,y+h,0).tex(maxU,maxV).endVertex();
         buffer.pos(x+w,y,0).tex(maxU,minV).endVertex();
         buffer.pos(x,y,0).tex(minU,minV).endVertex();
+    }
+
+    public boolean isOffHandEmpty(EntityPlayer player) {
+        for (ItemStack s : player.inventory.offHandInventory) {
+            if(s != null)
+                return false;
+        }
+        return true;
     }
 }

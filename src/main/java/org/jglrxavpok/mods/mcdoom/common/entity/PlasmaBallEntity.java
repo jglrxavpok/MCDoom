@@ -159,8 +159,8 @@ public class PlasmaBallEntity extends EntityThrowable implements IEntityAddition
 
     private void prepareDeath() {
         motionX = motionY = motionZ = 0;
-        worldObj.newExplosion(this, posX, posY, posZ, 2f, false, true);
-        worldObj.newExplosion(this, posX, posY, posZ, 4f, true, false); // does not damage the terrain
+        worldObj.newExplosion(this, posX, posY, posZ, 7f, false, true);
+        worldObj.newExplosion(this, posX, posY, posZ, 5f, true, false); // does not damage the terrain
         getDataManager().set(DEATH_COUNTER, MAX_DEATH_COUNTER);
     }
 

@@ -6,26 +6,33 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.layers.LayerCustomHead;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Enchantments;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemArrow;
+import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
+import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
+import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 import org.lwjgl.opengl.GL11;
-
-import java.util.Arrays;
 
 @SideOnly(Side.CLIENT)
 public class DoomHUDRenderer {
 
+    private static final int INFINITE_AMMO = -1;
     private final ResourceLocation hudLocation;
-    private final static String allowedChars = "0123456789%";
-    private final static int[] bigFontCharWidth = {16,12,15,15,15,15,15,15,15,15,14};
-    private final static int[] bigFontCharX = {0,16,28,43,58,73,88,103,118,133,148};
+
+    private final static String allowedChars = "0123456789%\u221E"; // \u221E is the Unicode value for the infinity symbol: ∞
+    private final static int[] bigFontCharWidth = {16,12,15,15,15,15,15,15,15,15,14,15,16};
+    private final static int[] bigFontCharX = {0,16,28,43,58,73,88,103,118,133,148,162};
     private final ResourceLocation bigFontLocation;
     private final ResourceLocation inventoryFontLocation;
     private final ModelPlayer playerModel;
@@ -65,18 +72,66 @@ public class DoomHUDRenderer {
         int health = (int) (player.getHealth()/player.getMaxHealth() * 100f);
         float healthX = 102f-getTextWidth(health+"%")*0.9f;
         float healthY = 25;
-        renderPercentage(health, healthX*yScale, screenH-healthY*yScale, yScale*.9f);
+        renderText(health+"%", healthX*yScale, screenH-healthY*yScale, yScale*.9f);
 
         int armor = (int) (player.getTotalArmorValue()*10);
         float armorX = 198f-getTextWidth(armor+"")*0.9f;
         float armorY = 25;
         renderText(""+armor, armorX*yScale, screenH-armorY*yScale, yScale*.9f);
 
+        int currentAmmo = countAmmo(player);
+        String currentAmmoText;
+        switch (currentAmmo) {
+            case INFINITE_AMMO:
+                currentAmmoText = "\u221E";
+                break;
+
+            default:
+                currentAmmoText = String.valueOf(currentAmmo);
+        }
+        float ammoX = 44f-getTextWidth(currentAmmoText)*0.9f;
+        float ammoY = 25;
+        renderText(currentAmmoText, ammoX*yScale, screenH-ammoY*yScale, yScale*.9f);
+
 //        renderPlayerHead(screenW, screenH, yScale);
 
         renderInventory(player, screenW, screenH, yScale);
 
         return h;
+    }
+
+    private int countAmmo(EntityPlayerSP player) {
+        ItemStack current = player.inventory.getCurrentItem();
+        if(current != null) {
+            if(current.getItem() instanceof ItemBow) {
+                int enchant = net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.INFINITY, current);
+                if(enchant > 0) {
+                    return INFINITE_AMMO;
+                }
+                return countItem(player.inventory, ItemArrow.class);
+            } else if(current.getItem() instanceof FunWeaponItem) {
+                return INFINITE_AMMO;
+            } else if(current.getItem() instanceof WeaponItem) {
+                //return countItem(player.inventory, ItemArrow.class);
+                // TODO
+                return 0;
+            }
+        }
+        return INFINITE_AMMO;
+    }
+
+    private int countItem(InventoryPlayer inventory, Class<? extends Item> soughtItemClass) {
+        int counter = 0;
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if(stack != null && stack.getItem() != null) {
+                Class<? extends Item> itemClass = stack.getItem().getClass();
+                if(soughtItemClass.isAssignableFrom(itemClass)) {
+                    counter += stack.stackSize;
+                }
+            }
+        }
+        return counter;
     }
 
     private void renderInventory(EntityPlayerSP player, float screenW, float screenH, float yScale) {
@@ -180,10 +235,6 @@ public class DoomHUDRenderer {
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
-    private void renderPercentage(int number, float x, float y, float scale) {
-        renderText(number+"%", x, y, scale);
-    }
-
     private void renderText(String text, float x, float y, float scale) {
         char[] chars = text.toCharArray();
 
@@ -218,10 +269,10 @@ public class DoomHUDRenderer {
 
         float w = bigFontCharWidth[index]*scale;
         float h = 16f*scale;
-        float minU = (bigFontCharX[index])/(162f);
+        float minU = (bigFontCharX[index])/(178f);
         float maxU = 1f;
         if(index+1 < allowedChars.length()) {
-            maxU = (bigFontCharX[index+1]-1)/(162f);
+            maxU = (bigFontCharX[index+1]-1)/(178f);
         }
         float minV = 0f;
         float maxV = 1f;

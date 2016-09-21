@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
@@ -19,6 +20,7 @@ import org.jglrxavpok.mods.mcdoom.common.weapons.EnumWeaponType;
 import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class WeaponItem extends Item {
 
@@ -78,6 +80,11 @@ public class WeaponItem extends Item {
                     break;
             }
         }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+        tooltip.add("Requires "+definition.getAmmoType());
     }
 
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {

@@ -1,10 +1,8 @@
 package org.jglrxavpok.mods.mcdoom.common;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.Sound;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -19,12 +17,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomWeaponUpdater;
 import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
+import org.jglrxavpok.mods.mcdoom.common.items.ItemAmmo;
 import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 import org.jglrxavpok.mods.mcdoom.common.weapons.EnumWeaponType;
 import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
+import java.util.List;
 
 @Mod(name = "MCDoom", version = "0.0.1", modid = MCDoom.modid)
 public class MCDoom {
@@ -42,6 +41,9 @@ public class MCDoom {
     public SoundEvent chainsawHit;
     public SoundEvent chainsawFull;
     private boolean doomUIEnabled;
+
+    // only used at pre init to keep in mind which ammo types have to be initialized
+    private List<String> ammoToDefine = Lists.newLinkedList();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
@@ -77,6 +79,20 @@ public class MCDoom {
 
             funVersion.setRegistryName(modid, "fun_"+definition.getId());
             GameRegistry.register(funVersion);
+
+            defineAmmo(definition.getAmmoType());
+        }
+
+        for(String ammoType : ammoToDefine) {
+            ItemAmmo ammo = new ItemAmmo(ammoType);
+            ammo.setRegistryName(modid, "ammo_"+ammoType);
+            GameRegistry.register(ammo);
+        }
+    }
+
+    private void defineAmmo(String ammoType) {
+        if(!ammoToDefine.contains(ammoType)) {
+            ammoToDefine.add(ammoType);
         }
     }
 

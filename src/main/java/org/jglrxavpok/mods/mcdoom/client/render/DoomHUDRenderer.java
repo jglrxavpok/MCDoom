@@ -21,6 +21,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
+import org.jglrxavpok.mods.mcdoom.common.items.ItemAmmo;
 import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 import org.lwjgl.opengl.GL11;
 
@@ -112,12 +113,23 @@ public class DoomHUDRenderer {
             } else if(current.getItem() instanceof FunWeaponItem) {
                 return INFINITE_AMMO;
             } else if(current.getItem() instanceof WeaponItem) {
-                //return countItem(player.inventory, ItemArrow.class);
-                // TODO
-                return 0;
+                return countAmmo(player.inventory, ((WeaponItem) current.getItem()).getDefinition().getAmmoType());
             }
         }
         return INFINITE_AMMO;
+    }
+
+    private int countAmmo(InventoryPlayer inventory, String ammoType) {
+        int counter = 0;
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if(stack != null && stack.getItem() instanceof ItemAmmo) {
+                ItemAmmo ammo = (ItemAmmo) stack.getItem();
+                if(ammo.getAmmoType().equals(ammoType))
+                    counter += stack.stackSize;
+            }
+        }
+        return counter;
     }
 
     private int countItem(InventoryPlayer inventory, Class<? extends Item> soughtItemClass) {
@@ -146,27 +158,28 @@ public class DoomHUDRenderer {
 
         for (int i = 0; i < 9; i++) {
             ItemStack stack = player.inventory.mainInventory[i];
-            if(stack != null) {
-                final float singleCharW = 4f;
-                boolean equipped = stack == player.inventory.getCurrentItem();
-                float minU = Math.min(1, ((singleCharW+1)*(i+1))/(49f));
-                float maxU = Math.min(1, minU+(singleCharW/49f));
-                float minV = 0f;
-                float maxV = 6f/(13f);
 
-                if(equipped) {
-                    minV = 7f/(13f);
+            final float singleCharW = 4f;
+            boolean equipped = player.inventory.currentItem == i;
+            if(stack != null || equipped) { // makes sure the player allows know where the hotbar cursor is
+                float minU = Math.min(1, ((singleCharW + 1) * (i + 1)) / (49f));
+                float maxU = Math.min(1, minU + (singleCharW / 49f));
+                float minV = 0f;
+                float maxV = 6f / (13f);
+
+                if (equipped) {
+                    minV = 7f / (13f);
                     maxV = 1f;
                 }
 
-                float y = screenH-yScale*(17f + ((i % 5 >= i) ? 10f : 0));
-                float w = singleCharW*yScale;
-                float h = 6f*yScale;
-                float x = yScale*(204f + (i % 5)*(12f) +2f);
-                buffer.pos(x,y+h,0).tex(minU,maxV).endVertex();
-                buffer.pos(x+w,y+h,0).tex(maxU,maxV).endVertex();
-                buffer.pos(x+w,y,0).tex(maxU,minV).endVertex();
-                buffer.pos(x,y,0).tex(minU,minV).endVertex();
+                float y = screenH - yScale * (17f + ((i % 5 >= i) ? 10f : 0));
+                float w = singleCharW * yScale;
+                float h = 6f * yScale;
+                float x = yScale * (204f + (i % 5) * (12f) + 2f);
+                buffer.pos(x, y + h, 0).tex(minU, maxV).endVertex();
+                buffer.pos(x + w, y + h, 0).tex(maxU, maxV).endVertex();
+                buffer.pos(x + w, y, 0).tex(maxU, minV).endVertex();
+                buffer.pos(x, y, 0).tex(minU, minV).endVertex();
             }
         }
 

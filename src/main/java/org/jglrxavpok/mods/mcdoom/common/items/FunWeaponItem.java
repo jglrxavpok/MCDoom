@@ -24,7 +24,6 @@ public class FunWeaponItem extends WeaponItem {
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, playerIn, tooltip, advanced);
         tooltip.add(TextFormatting.ITALIC+"Infinite ammo");
         tooltip.add(TextFormatting.ITALIC+"No cooldown");
         tooltip.add("Go kill things, have fun!");

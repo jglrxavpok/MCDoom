@@ -7,6 +7,9 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -25,7 +28,7 @@ import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 import java.io.InputStreamReader;
 import java.util.List;
 
-@Mod(name = "MCDoom", version = "0.0.1", modid = MCDoom.modid)
+@Mod(name = "MCDoom", version = "0.0.1", modid = MCDoom.modid, guiFactory = "org.jglrxavpok.mods.mcdoom.client.GuiFactory")
 public class MCDoom {
 
     public static final String modid = "mcdoom";
@@ -35,18 +38,30 @@ public class MCDoom {
 
     @SidedProxy(clientSide = "org.jglrxavpok.mods.mcdoom.client.MCDoomClientProxy", serverSide = "org.jglrxavpok.mods.mcdoom.server.MCDoomServerProxy")
     public static MCDoomProxy proxy;
+    private ConfigCategory categoryGraphical;
     private Gson gson;
     public SoundEvent chainsawUp;
     public SoundEvent chainsawIdle;
     public SoundEvent chainsawHit;
-    public SoundEvent chainsawFull;
-    private boolean doomUIEnabled;
 
+    public SoundEvent chainsawFull;
     // only used at pre init to keep in mind which ammo types have to be initialized
     private List<String> ammoToDefine = Lists.newLinkedList();
+    private Configuration config;
+    private Property doomUIProperty;
+
+    private Property goreProperty;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
+        config = new Configuration(evt.getSuggestedConfigurationFile());
+        config.load();
+        categoryGraphical = config.getCategory("Graphical");
+        doomUIProperty = config.get("Graphical", "Enable DOOM-like UI", true, "Enables the DOOM-like UI ingame");
+        goreProperty = config.get("Graphical", "Enable gore particles", true, "Enables the gore particles ingame");
+
+        config.save();
+
         gson = new Gson();
         registerItems();
         EntityRegistry.registerModEntity(PlasmaBallEntity.class, "plasma_ball", 0, this, 64, 20, true);
@@ -127,8 +142,19 @@ public class MCDoom {
         proxy.postInit(evt);
     }
 
-    public boolean isDoomUIEnabled() {
-        // TODO: return doomUIEnabled;
-        return true;
+    public Property getDoomUIProperty() {
+        return doomUIProperty;
+    }
+
+    public Configuration getConfig() {
+        return config;
+    }
+
+    public Property getGoreProperty() {
+        return goreProperty;
+    }
+
+    public ConfigCategory getCategoryGraphical() {
+        return categoryGraphical;
     }
 }

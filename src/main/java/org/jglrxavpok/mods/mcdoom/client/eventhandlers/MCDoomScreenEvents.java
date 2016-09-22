@@ -55,7 +55,7 @@ public class MCDoomScreenEvents {
         Minecraft mc = Minecraft.getMinecraft();
         float verticalOffset = 0;
         if (evt.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
-            if (MCDoom.instance.isDoomUIEnabled()) {
+            if (MCDoom.instance.getDoomUIProperty().getBoolean()) {
                 verticalOffset = hudRenderer.draw(evt.getResolution(), evt.getPartialTicks());
                 evt.setCanceled(true);
             }
@@ -65,7 +65,7 @@ public class MCDoomScreenEvents {
             }
         }
 
-        if (MCDoom.instance.isDoomUIEnabled()) {
+        if (MCDoom.instance.getDoomUIProperty().getBoolean()) {
             switch (evt.getType()) {
                 case ARMOR:
                 case EXPERIENCE:

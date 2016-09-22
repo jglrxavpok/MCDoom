@@ -20,7 +20,7 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "Alpha v0.0.1"
+version = "Alpha v0.0.2"
 group= "org.jglrxavpok.mods" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "mcdoom"
 

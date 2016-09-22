@@ -28,7 +28,7 @@ import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 import java.io.InputStreamReader;
 import java.util.List;
 
-@Mod(name = "MCDoom", version = "0.0.1", modid = MCDoom.modid, guiFactory = "org.jglrxavpok.mods.mcdoom.client.GuiFactory")
+@Mod(name = "MCDoom", version = "Indev", modid = MCDoom.modid, guiFactory = "org.jglrxavpok.mods.mcdoom.client.GuiFactory")
 public class MCDoom {
 
     public static final String modid = "mcdoom";

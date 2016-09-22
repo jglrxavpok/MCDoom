@@ -202,4 +202,9 @@ public class PlasmaBallEntity extends EntityThrowable implements IEntityAddition
             owner = worldObj.getPlayerEntityByUUID(UUID.fromString(throwerID));
         }
     }
+
+    @Override
+    public boolean isImmuneToExplosions() {
+        return true;
+    }
 }

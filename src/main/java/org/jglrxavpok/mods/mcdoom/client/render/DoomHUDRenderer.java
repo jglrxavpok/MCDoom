@@ -219,7 +219,7 @@ public class DoomHUDRenderer {
             GlStateManager.pushMatrix();
             float posX = 123f*yScale;
             float posY = screenH - 8f*yScale;
-            float scale = yScale*.65f;
+            float scale = yScale;
 
             // TODO: Find out why the head never has the same size when reloading the game
 
@@ -243,6 +243,7 @@ public class DoomHUDRenderer {
 
 
             GlStateManager.popMatrix();
+            GlStateManager.disableRescaleNormal();
             GlStateManager.disableAlpha();
         }
     }

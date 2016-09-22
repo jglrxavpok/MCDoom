@@ -3,7 +3,9 @@ package org.jglrxavpok.mods.mcdoom.client.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelPlayer;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -17,12 +19,14 @@ import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
 import org.jglrxavpok.mods.mcdoom.common.items.ItemAmmo;
 import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -36,13 +40,17 @@ public class DoomHUDRenderer {
     private final static int[] bigFontCharX = {0,16,28,43,58,73,88,103,118,133,148,162};
     private final ResourceLocation bigFontLocation;
     private final ResourceLocation inventoryFontLocation;
-    private final ModelPlayer playerModel;
+    private PlayerHeadModel headModel; // TODO: Make final
+    private int hurtSign;
 
     public DoomHUDRenderer() {
         hudLocation = new ResourceLocation(MCDoom.modid, "textures/hud/doomHUD.png");
         bigFontLocation = new ResourceLocation(MCDoom.modid, "textures/hud/bigFont.png");
         inventoryFontLocation = new ResourceLocation(MCDoom.modid, "textures/hud/invFont.png");
-        playerModel = new ModelPlayer(1, false);
+
+        hurtSign = 1;
+
+        headModel = new PlayerHeadModel(1f);
     }
 
     public float draw(ScaledResolution resolution, float partialTicks) {
@@ -94,7 +102,7 @@ public class DoomHUDRenderer {
         float ammoY = 25;
         renderText(currentAmmoText, ammoX*yScale, screenH-ammoY*yScale, yScale*.9f);
 
-//        renderPlayerHead(screenW, screenH, yScale);
+        renderPlayerHead(screenW, screenH, yScale);
 
         renderInventory(player, screenW, screenH, yScale);
 
@@ -204,48 +212,39 @@ public class DoomHUDRenderer {
     }
 
     private void renderPlayerHead(float screenW, float screenH, float yScale) {
-        GlStateManager.enableColorMaterial();
-        GlStateManager.pushMatrix();
-        float posX = screenW/2f;
-        float posY = screenH/2f;
-        float scale = 10f;
-        float mouseX = 0f;
-        float mouseY = 0f;
-        EntityPlayer ent = Minecraft.getMinecraft().thePlayer;
-        GlStateManager.translate((float)posX, (float)posY, 50.0F);
-        GlStateManager.scale((float)(-scale), (float)scale, (float)scale);
-        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-        float f = ent.renderYawOffset;
-        float f1 = ent.rotationYaw;
-        float f2 = ent.rotationPitch;
-        float f3 = ent.prevRotationYawHead;
-        float f4 = ent.rotationYawHead;
-        GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(-((float)Math.atan((double)(mouseY / 40.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
-        ent.limbSwing = 0;
-        ent.limbSwingAmount = 0;
-        ent.renderYawOffset = 0;
-        ent.rotationYaw = 0;
-        ent.rotationPitch = 0;
-        ent.rotationYawHead = 0;
-        ent.prevRotationYawHead = ent.rotationYaw;
-        RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
-        rendermanager.setPlayerViewY(180.0F);
-        rendermanager.setRenderShadow(false);
-        rendermanager.doRenderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
-        ent.renderYawOffset = f;
-        ent.rotationYaw = f1;
-        ent.rotationPitch = f2;
-        ent.prevRotationYawHead = f3;
-        ent.rotationYawHead = f4;
-        GlStateManager.popMatrix();
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.disableTexture2D();
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayerSP ent = mc.thePlayer;
+        if(ent != null) {
+            GlStateManager.enableAlpha();
+            GlStateManager.pushMatrix();
+            float posX = 123f*yScale;
+            float posY = screenH - 8f*yScale;
+            float scale = yScale*.65f;
+
+            // TODO: Find out why the head never has the same size when reloading the game
+
+            GlStateManager.translate((float)posX, (float)posY, 50.0F);
+            GlStateManager.scale((float)(-scale), (float)scale, (float)scale);
+
+            if(ent.hurtTime == 0)
+                hurtSign = -hurtSign;
+            float zAngle = ent.hurtTime * hurtSign * 5f;
+
+            GlStateManager.rotate(-5f, 1.0F, 0.0F, 0.0F);
+
+            float yAngle = 180.0F + MathHelper.sin(ent.getEntityWorld().getTotalWorldTime()/25f)*8f;
+            yAngle %= 360f;
+            GlStateManager.rotate(yAngle, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(zAngle, 0.0F, 0.0F, 1.0F);
+
+            mc.renderEngine.bindTexture(ent.getLocationSkin());
+
+            headModel.quickRender(scale);
+
+
+            GlStateManager.popMatrix();
+            GlStateManager.disableAlpha();
+        }
     }
 
     private void renderText(String text, float x, float y, float scale) {

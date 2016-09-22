@@ -128,15 +128,6 @@ public class RenderPlasmaBall extends Render<PlasmaBallEntity> {
         tessellator.draw();
     }
 
-    protected void renderLivingLabel0(Entity e, String str, double x, double y, double z)
-    {
-        float f = this.renderManager.playerViewY;
-        float f1 = this.renderManager.playerViewX;
-        boolean flag1 = this.renderManager.options.thirdPersonView == 2;
-        float f2 = e.height + 0.5F;
-        EntityRenderer.func_189692_a(this.getFontRendererFromRenderManager(), str, (float)x, (float)y + f2, (float)z, 0, f, f1, flag1, false);
-    }
-
     @Override
     protected ResourceLocation getEntityTexture(PlasmaBallEntity entity) {
         return sheet;

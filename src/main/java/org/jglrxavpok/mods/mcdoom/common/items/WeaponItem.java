@@ -14,6 +14,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
+import org.jglrxavpok.mods.mcdoom.common.MCDoomDamages;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 import org.jglrxavpok.mods.mcdoom.common.utils.MathUtils;
 import org.jglrxavpok.mods.mcdoom.common.weapons.EnumWeaponType;
@@ -73,7 +74,7 @@ public class WeaponItem extends Item {
                     });
                     if(raycast != null) {
                         if(raycast.typeOfHit == RayTraceResult.Type.ENTITY && raycast.entityHit instanceof EntityLivingBase) {
-                            raycast.entityHit.attackEntityFrom(DamageSource.generic, definition.getBaseDamage());
+                            raycast.entityHit.attackEntityFrom(MCDoomDamages.createChainsawDamage(shooter), definition.getBaseDamage());
                             world.playSound(shooter.posX, shooter.posY, shooter.posZ, MCDoom.instance.chainsawHit, SoundCategory.PLAYERS, 1, 1, false);
                         }
                     }

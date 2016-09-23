@@ -10,18 +10,24 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
+import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomGoreHandler;
 import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomWeaponUpdater;
 import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
 import org.jglrxavpok.mods.mcdoom.common.items.ItemAmmo;
 import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
+import org.jglrxavpok.mods.mcdoom.common.network.MessageSpawnGoreParticles;
 import org.jglrxavpok.mods.mcdoom.common.weapons.EnumWeaponType;
 import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 
@@ -38,6 +44,7 @@ public class MCDoom {
 
     @SidedProxy(clientSide = "org.jglrxavpok.mods.mcdoom.client.MCDoomClientProxy", serverSide = "org.jglrxavpok.mods.mcdoom.server.MCDoomServerProxy")
     public static MCDoomProxy proxy;
+    public static final SimpleNetworkWrapper network = NetworkRegistry.INSTANCE.newSimpleChannel(modid);
     private ConfigCategory categoryGraphical;
     private Gson gson;
     public SoundEvent chainsawUp;
@@ -58,7 +65,9 @@ public class MCDoom {
         config.load();
         categoryGraphical = config.getCategory("Graphical");
         doomUIProperty = config.get("Graphical", "Enable DOOM-like UI", true, "Enables the DOOM-like UI ingame");
-        goreProperty = config.get("Graphical", "Enable gore particles", true, "Enables the gore particles ingame");
+        goreProperty = config.get("Graphical", "Gore multiplier", 1.0, "Modifies the amount of gore particles ingame");
+        goreProperty.setMaxValue(20.);
+        goreProperty.setMinValue(0.);
 
         config.save();
 
@@ -70,6 +79,12 @@ public class MCDoom {
         proxy.preInit(evt);
 
         MinecraftForge.EVENT_BUS.register(new MCDoomWeaponUpdater());
+        MinecraftForge.EVENT_BUS.register(new MCDoomGoreHandler());
+        registerPackets();
+    }
+
+    private void registerPackets() {
+        network.registerMessage(MessageSpawnGoreParticles.Handler.class, MessageSpawnGoreParticles.class, 0, Side.CLIENT);
     }
 
     public void loadSounds() {

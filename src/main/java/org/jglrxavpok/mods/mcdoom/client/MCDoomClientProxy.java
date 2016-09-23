@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -49,6 +50,8 @@ public class MCDoomClientProxy extends MCDoomProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent evt) {
+        MCDoom.instance.getGoreProperty().setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class);
+
         MinecraftForge.EVENT_BUS.register(screenEventHandler);
         MinecraftForge.EVENT_BUS.register(soundEventsHandler);
         registerItems();

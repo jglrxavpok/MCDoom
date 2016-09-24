@@ -59,7 +59,6 @@ public class MessageSpawnGoreParticles implements IMessage {
         public IMessage onMessage(MessageSpawnGoreParticles message, MessageContext ctx) {
             if(ctx.side != Side.CLIENT)
                 throw new IllegalStateException("Cannot send MessageSpawnGoreParticles to a server!");
-            System.out.println("received!");
             double count = message.count * MCDoom.instance.getGoreProperty().getDouble();
             for (int i = 0; i < count; i++) {
                 float dx = (float) rand.nextGaussian() * 0.5f;
@@ -69,8 +68,7 @@ public class MessageSpawnGoreParticles implements IMessage {
                 float my = (float) (rand.nextGaussian()/2f + 0.5f) * 0.75f;
                 float mz = (float) rand.nextGaussian() * 0.1f;
                 Particle particle = new EntityGoreFX(Minecraft.getMinecraft().theWorld, message.x+dx, message.y+dy, message.z+dz, mx, my, mz);
-                Minecraft.getMinecraft().effectRenderer.addEffect(particle); // TODO: replace with custom particle
-                System.out.println(mx+","+my+","+mz);
+                Minecraft.getMinecraft().effectRenderer.addEffect(particle);
             }
             return null;
         }

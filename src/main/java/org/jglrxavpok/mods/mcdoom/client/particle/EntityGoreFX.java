@@ -21,8 +21,7 @@ import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class EntityGoreFX extends Particle {
-    private static final ResourceLocation PARTICLE_TEXTURES = new ResourceLocation("textures/particle/particles.png");
-    private static final ResourceLocation GORE_PARTICLE_LOCATION  = new ResourceLocation(MCDoom.modid, "textures/particle/gore.png");
+    public static final ResourceLocation GORE_PARTICLE_LOCATION  = new ResourceLocation(MCDoom.modid, "textures/particle/gore.png");
     private final int minX;
     private final int minY;
     private final int maxX;
@@ -30,7 +29,7 @@ public class EntityGoreFX extends Particle {
 
     public EntityGoreFX(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
-        particleMaxAge = 1000;
+        particleMaxAge = 10 * 300;
         particleGravity = 0.6f;
 
         // Takes a random 4x4 region of the texture
@@ -38,6 +37,9 @@ public class EntityGoreFX extends Particle {
         minY = (int) Math.floor(Math.random()*(16-4));
         maxX = minX + 4;
         maxY = minY + 4;
+
+        this.field_190014_F = (float) (Math.random()* Math.PI*2f); // sets the rotation of the particle
+        field_190015_G = field_190014_F; // set 'lastRotation' variable
     }
 
     @Override
@@ -76,14 +78,12 @@ public class EntityGoreFX extends Particle {
 
     }
 
-    @Override
     public void renderParticle(VertexBuffer buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        Tessellator tessellator = Tessellator.getInstance();
 
-        tessellator.draw(); // forces a Tessellator flush in order to change the texture
+    }
 
-        Minecraft.getMinecraft().renderEngine.bindTexture(GORE_PARTICLE_LOCATION);
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+    public void renderParticle0(VertexBuffer buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+
         float minU = (minX)/16f;
         float maxU = (maxX)/16f;
         float minV = (minY)/16f;
@@ -93,6 +93,7 @@ public class EntityGoreFX extends Particle {
         float xPos = (float)(this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks - interpPosX);
         float yPos = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks - interpPosY) + 0.025f;
         float zPos = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks - interpPosZ);
+
         int brightness = this.getBrightnessForRender(partialTicks);
         int j = brightness >> 16 & 65535;
         int k = brightness & 65535;
@@ -100,11 +101,11 @@ public class EntityGoreFX extends Particle {
 
         if (this.field_190014_F != 0.0F)
         {
-            float f8 = this.field_190014_F + (this.field_190014_F - this.field_190015_G) * partialTicks;
-            float f9 = MathHelper.cos(f8 * 0.5F);
-            float f10 = MathHelper.sin(f8 * 0.5F) * (float)field_190016_K.xCoord;
-            float f11 = MathHelper.sin(f8 * 0.5F) * (float)field_190016_K.yCoord;
-            float f12 = MathHelper.sin(f8 * 0.5F) * (float)field_190016_K.zCoord;
+            float interpolatedAngle = this.field_190014_F + (this.field_190014_F - this.field_190015_G) * partialTicks;
+            float f9 = MathHelper.cos(interpolatedAngle * 0.5F);
+            float f10 = MathHelper.sin(interpolatedAngle * 0.5F) * (float)field_190016_K.xCoord;
+            float f11 = MathHelper.sin(interpolatedAngle * 0.5F) * (float)field_190016_K.yCoord;
+            float f12 = MathHelper.sin(interpolatedAngle * 0.5F) * (float)field_190016_K.zCoord;
             Vec3d vec3d = new Vec3d((double)f10, (double)f11, (double)f12);
 
             for (int l = 0; l < 4; ++l)
@@ -117,10 +118,10 @@ public class EntityGoreFX extends Particle {
         buffer.pos((double)xPos + avec3d[1].xCoord, (double)yPos + avec3d[1].yCoord, (double)zPos + avec3d[1].zCoord).tex((double)maxU, (double)minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
         buffer.pos((double)xPos + avec3d[2].xCoord, (double)yPos + avec3d[2].yCoord, (double)zPos + avec3d[2].zCoord).tex((double)minU, (double)minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
         buffer.pos((double)xPos + avec3d[3].xCoord, (double)yPos + avec3d[3].yCoord, (double)zPos + avec3d[3].zCoord).tex((double)minU, (double)maxV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+    }
 
-        tessellator.draw(); // forces a Tessellator flush in order to change the texture
-
-        Minecraft.getMinecraft().renderEngine.bindTexture(PARTICLE_TEXTURES);
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+    @Override
+    public int getFXLayer() {
+        return 3;
     }
 }

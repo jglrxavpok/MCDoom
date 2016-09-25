@@ -68,7 +68,7 @@ public class MessageSpawnGoreParticles implements IMessage {
                 float my = (float) (rand.nextGaussian()/2f + 0.5f) * 0.75f;
                 float mz = (float) rand.nextGaussian() * 0.1f;
                 Particle particle = new EntityGoreFX(Minecraft.getMinecraft().theWorld, message.x+dx, message.y+dy, message.z+dz, mx, my, mz);
-                Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+                MCDoom.proxy.spawnParticle(particle);
             }
             return null;
         }

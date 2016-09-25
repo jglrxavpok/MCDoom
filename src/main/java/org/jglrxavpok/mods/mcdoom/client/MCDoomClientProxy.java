@@ -1,7 +1,9 @@
 package org.jglrxavpok.mods.mcdoom.client;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -16,12 +18,14 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.client.eventhandlers.MCDoomScreenEvents;
 import org.jglrxavpok.mods.mcdoom.client.eventhandlers.MCDoomSoundEvents;
+import org.jglrxavpok.mods.mcdoom.client.particle.EntityGoreFX;
 import org.jglrxavpok.mods.mcdoom.client.render.RenderPlasmaBall;
 import org.jglrxavpok.mods.mcdoom.client.render.WeaponRenderer;
 import org.jglrxavpok.mods.mcdoom.client.render.WeaponRendererLoader;
@@ -31,6 +35,8 @@ import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
 
 import java.lang.reflect.Field;
+import java.util.ArrayDeque;
+import java.util.LinkedList;
 import java.util.Map;
 
 @SideOnly(Side.CLIENT)
@@ -40,12 +46,18 @@ public class MCDoomClientProxy extends MCDoomProxy {
     private final WeaponRendererLoader weaponRendererLoader;
     private final MCDoomSoundEvents soundEventsHandler;
     private Map<String, WeaponRenderer> renderers;
+    private final LinkedList<EntityGoreFX> particlesToAdd;
+    private final LinkedList<EntityGoreFX> particlesToRemove;
+    private final ArrayDeque<EntityGoreFX> goreParticles;
 
     public MCDoomClientProxy() {
         renderers = Maps.newHashMap();
         screenEventHandler = new MCDoomScreenEvents(this);
         soundEventsHandler = new MCDoomSoundEvents();
         weaponRendererLoader = new WeaponRendererLoader();
+        goreParticles = new ArrayDeque<EntityGoreFX>();
+        particlesToAdd = Lists.newLinkedList();
+        particlesToRemove = Lists.newLinkedList();
     }
 
     @Override
@@ -94,7 +106,39 @@ public class MCDoomClientProxy extends MCDoomProxy {
 
     }
 
+    @Override
+    public void spawnParticle(Particle particle) {
+        particlesToAdd.add((EntityGoreFX) particle);
+    }
+
+    @Override
+    public void onTickEvent(TickEvent evt) {
+        if(evt instanceof TickEvent.ClientTickEvent && evt.phase == TickEvent.Phase.END) {
+            for (EntityGoreFX p : goreParticles) {
+                p.onUpdate();
+                if(!p.isAlive())
+                    particlesToRemove.add(p);
+            }
+
+            goreParticles.addAll(particlesToAdd);
+            goreParticles.removeAll(particlesToRemove);
+
+            particlesToRemove.clear();
+            particlesToAdd.clear();
+
+            final int maxParticles = 10000; // TODO: Change and make it a property
+            int overflow = goreParticles.size() - maxParticles;
+            for (int i = 0; i < overflow; i++) {
+                goreParticles.removeFirst();
+            }
+        }
+    }
+
     public WeaponRenderer getRenderer(String id) {
         return renderers.get(id);
+    }
+
+    public ArrayDeque<EntityGoreFX> getGoreParticles() {
+        return goreParticles;
     }
 }

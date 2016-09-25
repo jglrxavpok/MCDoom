@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomGoreHandler;
+import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomTickEvents;
 import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomWeaponUpdater;
 import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
 import org.jglrxavpok.mods.mcdoom.common.items.ItemAmmo;
@@ -80,6 +81,7 @@ public class MCDoom {
 
         MinecraftForge.EVENT_BUS.register(new MCDoomWeaponUpdater());
         MinecraftForge.EVENT_BUS.register(new MCDoomGoreHandler());
+        MinecraftForge.EVENT_BUS.register(new MCDoomTickEvents());
         registerPackets();
     }
 

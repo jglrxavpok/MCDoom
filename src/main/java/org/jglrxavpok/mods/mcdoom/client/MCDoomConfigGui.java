@@ -12,7 +12,11 @@ public class MCDoomConfigGui extends GuiConfig {
     public MCDoomConfigGui(GuiScreen parentScreen) {
         super(parentScreen, new ConfigElement(MCDoom.instance.getCategoryGraphical()).getChildElements(),
                 MCDoom.modid, false, false, "MCDoom Graphical Config");
-
     }
 
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        MCDoom.instance.getConfig().save();
+    }
 }

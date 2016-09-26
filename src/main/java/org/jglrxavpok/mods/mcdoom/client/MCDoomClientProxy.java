@@ -63,6 +63,7 @@ public class MCDoomClientProxy extends MCDoomProxy {
     @Override
     public void preInit(FMLPreInitializationEvent evt) {
         MCDoom.instance.getGoreProperty().setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class);
+        MCDoom.instance.getMaxGoreParticles().setConfigEntryClass(GuiConfigEntries.NumberSliderEntry.class);
 
         MinecraftForge.EVENT_BUS.register(screenEventHandler);
         MinecraftForge.EVENT_BUS.register(soundEventsHandler);
@@ -126,7 +127,7 @@ public class MCDoomClientProxy extends MCDoomProxy {
             particlesToRemove.clear();
             particlesToAdd.clear();
 
-            final int maxParticles = 10000; // TODO: Change and make it a property
+            final int maxParticles = MCDoom.instance.getMaxGoreParticles().getInt();
             int overflow = goreParticles.size() - maxParticles;
             for (int i = 0; i < overflow; i++) {
                 goreParticles.removeFirst();

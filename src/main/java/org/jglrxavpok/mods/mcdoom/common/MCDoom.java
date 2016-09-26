@@ -57,8 +57,8 @@ public class MCDoom {
     private List<String> ammoToDefine = Lists.newLinkedList();
     private Configuration config;
     private Property doomUIProperty;
-
     private Property goreProperty;
+    private Property maxGoreParticles;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
@@ -66,9 +66,12 @@ public class MCDoom {
         config.load();
         categoryGraphical = config.getCategory("Graphical");
         doomUIProperty = config.get("Graphical", "Enable DOOM-like UI", true, "Enables the DOOM-like UI ingame");
-        goreProperty = config.get("Graphical", "Gore multiplier", 1.0, "Modifies the amount of gore particles ingame");
+        goreProperty = config.get("Graphical", "Gore multiplier", 1.0, "Modifies the amount of gore particles spawned ingame");
+        maxGoreParticles = config.get("Graphical", "Maximum gore particle count", 10000, "Modifies the amount of particles rendered at the same time");
         goreProperty.setMaxValue(20.);
         goreProperty.setMinValue(0.);
+        maxGoreParticles.setMinValue(0);
+        maxGoreParticles.setMaxValue(100000);
 
         config.save();
 
@@ -173,5 +176,9 @@ public class MCDoom {
 
     public ConfigCategory getCategoryGraphical() {
         return categoryGraphical;
+    }
+
+    public Property getMaxGoreParticles() {
+        return maxGoreParticles;
     }
 }

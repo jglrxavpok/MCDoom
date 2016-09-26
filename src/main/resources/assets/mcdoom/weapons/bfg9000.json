@@ -5,6 +5,7 @@
   "ammoType": "bfg",
   "weaponType": "projectile",
   "baseDamage": 50,
+  "projectileType": "plasma_ball",
   "render": {
     "textures": [
       {

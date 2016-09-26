@@ -31,11 +31,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlasmaBallEntity extends EntityThrowable implements IEntityAdditionalSpawnData {
+public class PlasmaBallEntity extends MCDoomProjectileEntity {
     private static final DataParameter<Integer> DEATH_COUNTER = EntityDataManager.createKey(PlasmaBallEntity.class, DataSerializers.VARINT);
     public static final int MAX_DEATH_COUNTER = 5;
     private List<Entity> targets;
-    protected EntityLivingBase owner;
 
     public PlasmaBallEntity(World world) {
         super(world);
@@ -43,19 +42,6 @@ public class PlasmaBallEntity extends EntityThrowable implements IEntityAddition
 
     public PlasmaBallEntity(World world, EntityLivingBase owner) {
         super(world, owner);
-        this.owner = owner;
-        setHeadingFromThrower(owner, owner.rotationPitch, owner.rotationYaw, 0f, 2f, 0f);
-    }
-
-    public boolean isInRangeToRenderDist(double distance)
-    {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public EntityLivingBase getThrower() {
-        return owner;
     }
 
     @Override
@@ -84,8 +70,7 @@ public class PlasmaBallEntity extends EntityThrowable implements IEntityAddition
     }
 
     @Override
-    public void onEntityUpdate() {
-        super.onEntityUpdate();
+    protected void onProjectileUpdate() {
         if(!isDying()) {
             targets = worldObj.getEntitiesWithinAABB(Entity.class, getEntityBoundingBox().expand(20, 20, 20), new Predicate<Entity>() {
                 @Override
@@ -135,21 +120,12 @@ public class PlasmaBallEntity extends EntityThrowable implements IEntityAddition
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
         compound.setInteger("deathCounter", getDeathCounter());
-        if(owner != null)
-            compound.setString("ownerUUID", owner.getUniqueID().toString());
-        else
-            compound.setString("ownerUUID", "null");
     }
 
     @Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
         getDataManager().set(DEATH_COUNTER, compound.getInteger("deathCounter"));
-
-        String throwerID = compound.getString("ownerUUID");
-        if(!throwerID.equals("null") && !throwerID.isEmpty()) {
-            owner = worldObj.getPlayerEntityByUUID(UUID.fromString(throwerID));
-        }
     }
 
     @Override
@@ -185,22 +161,6 @@ public class PlasmaBallEntity extends EntityThrowable implements IEntityAddition
 
     public List<Entity> getTargets() {
         return targets;
-    }
-
-    @Override
-    public void writeSpawnData(ByteBuf buffer) {
-        if(getThrower() != null)
-            ByteBufUtils.writeUTF8String(buffer, getThrower().getUniqueID().toString());
-        else
-            ByteBufUtils.writeUTF8String(buffer, "null");
-    }
-
-    @Override
-    public void readSpawnData(ByteBuf additionalData) {
-        String throwerID = ByteBufUtils.readUTF8String(additionalData);
-        if(!throwerID.equals("null")) {
-            owner = worldObj.getPlayerEntityByUUID(UUID.fromString(throwerID));
-        }
     }
 
     @Override

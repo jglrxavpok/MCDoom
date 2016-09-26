@@ -15,9 +15,11 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.MCDoomDamages;
+import org.jglrxavpok.mods.mcdoom.common.entity.MCDoomProjectileEntity;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 import org.jglrxavpok.mods.mcdoom.common.utils.MathUtils;
 import org.jglrxavpok.mods.mcdoom.common.weapons.EnumWeaponType;
+import org.jglrxavpok.mods.mcdoom.common.weapons.MCDoomProjectiles;
 import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 
 import javax.annotation.Nullable;
@@ -58,8 +60,7 @@ public class WeaponItem extends Item {
             float raycastDistance = 2000f; // 2000 blocks across
             switch (definition.getWeaponType()) {
                 case PROJECTILE:
-                    // TODO: Change method depending on weapon
-                    PlasmaBallEntity entity = new PlasmaBallEntity(world, shooter);
+                    MCDoomProjectileEntity entity = MCDoomProjectiles.create(world, definition.getProjectileType(), shooter);
                     world.spawnEntityInWorld(entity);
                     break;
 

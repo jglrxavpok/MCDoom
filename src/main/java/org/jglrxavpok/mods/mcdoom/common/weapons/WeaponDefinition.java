@@ -8,6 +8,7 @@ public class WeaponDefinition {
     private String ammoType;
     private EnumWeaponType weaponType;
     private int baseDamage;
+    private String projectileType;
 
     public WeaponDefinition() {
 
@@ -59,5 +60,13 @@ public class WeaponDefinition {
 
     public int getBaseDamage() {
         return baseDamage;
+    }
+
+    public void setProjectileType(String projectileType) {
+        this.projectileType = projectileType;
+    }
+
+    public String getProjectileType() {
+        return projectileType;
     }
 }

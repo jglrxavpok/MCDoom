@@ -121,8 +121,10 @@ public class MCDoomClientProxy extends MCDoomProxy {
                     particlesToRemove.add(p);
             }
 
-            goreParticles.addAll(particlesToAdd);
-            goreParticles.removeAll(particlesToRemove);
+            synchronized (goreParticles) {
+                goreParticles.addAll(particlesToAdd);
+                goreParticles.removeAll(particlesToRemove);
+            }
 
             particlesToRemove.clear();
             particlesToAdd.clear();

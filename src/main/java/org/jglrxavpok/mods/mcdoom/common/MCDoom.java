@@ -144,6 +144,10 @@ public class MCDoom {
         definition.setAmmoType(object.get("ammoType").getAsString());
         definition.setBaseDamage(object.get("baseDamage").getAsInt());
         definition.setWeaponType(EnumWeaponType.valueOf(object.get("weaponType").getAsString().toUpperCase()));
+
+        if(definition.getWeaponType() == EnumWeaponType.PROJECTILE) {
+            definition.setProjectileType(object.get("projectileType").getAsString());
+        }
         return definition;
     }
 

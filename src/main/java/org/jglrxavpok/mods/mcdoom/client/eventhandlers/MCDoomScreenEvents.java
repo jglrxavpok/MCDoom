@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -14,8 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ReportedException;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -25,7 +22,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.client.MCDoomClientProxy;
 import org.jglrxavpok.mods.mcdoom.client.particle.EntityGoreFX;
 import org.jglrxavpok.mods.mcdoom.client.render.DoomHUDRenderer;
-import org.jglrxavpok.mods.mcdoom.client.render.TextureRegion;
 import org.jglrxavpok.mods.mcdoom.client.render.WeaponRenderer;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
@@ -47,12 +43,14 @@ public class MCDoomScreenEvents {
     @SubscribeEvent
     public void onItemDrawing(RenderHandEvent event) {
         Entity e = Minecraft.getMinecraft().getRenderViewEntity();
-        if(e instanceof EntityPlayer) {
-            ItemStack currentItem = ((EntityPlayer) e).inventory.getCurrentItem();
-            if(currentItem != null && currentItem.getItem() != null) {
-                Item actualItem = currentItem.getItem();
-                if(actualItem instanceof WeaponItem) {
-                    event.setCanceled(true);
+        if(MCDoom.instance.getDoomItemPoseProperty().getBoolean()) {
+            if (e instanceof EntityPlayer) {
+                ItemStack currentItem = ((EntityPlayer) e).inventory.getCurrentItem();
+                if (currentItem != null && currentItem.getItem() != null) {
+                    Item actualItem = currentItem.getItem();
+                    if (actualItem instanceof WeaponItem) {
+                        event.setCanceled(true);
+                    }
                 }
             }
         }
@@ -69,7 +67,9 @@ public class MCDoomScreenEvents {
             }
 
             if (mc.gameSettings.thirdPersonView == 0) {
-                renderWeapon(mc, evt.getResolution(), evt.getPartialTicks(), -verticalOffset);
+                if(MCDoom.instance.getDoomItemPoseProperty().getBoolean()) {
+                    renderWeapon(mc, evt.getResolution(), evt.getPartialTicks(), -verticalOffset);
+                }
             }
         }
 

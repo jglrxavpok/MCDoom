@@ -64,6 +64,7 @@ public class MCDoom {
     private Property doomUIProperty;
     private Property goreProperty;
     private Property maxGoreParticles;
+    private Property doomItemPose;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
@@ -73,6 +74,7 @@ public class MCDoom {
         doomUIProperty = config.get("Graphical", "Enable DOOM-like UI", true, "Enables the DOOM-like UI ingame");
         goreProperty = config.get("Graphical", "Gore multiplier", 1.0, "Modifies the amount of gore particles spawned ingame");
         maxGoreParticles = config.get("Graphical", "Maximum gore particle count", 10000, "Modifies the amount of particles rendered at the same time");
+        doomItemPose = config.get("Graphical", "Doom item pose", true, "Enables DOOM-like item pose");
         goreProperty.setMaxValue(20.);
         goreProperty.setMinValue(0.);
         maxGoreParticles.setMinValue(0);
@@ -199,5 +201,9 @@ public class MCDoom {
 
     public Property getMaxGoreParticles() {
         return maxGoreParticles;
+    }
+
+    public Property getDoomItemPoseProperty() {
+        return doomItemPose;
     }
 }

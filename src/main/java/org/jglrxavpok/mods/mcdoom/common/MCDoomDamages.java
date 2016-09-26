@@ -12,7 +12,7 @@ public class MCDoomDamages {
         return new EntityDamageSourceIndirect("bfg9000", plasmaBall, shooter).setProjectile();
     }
 
-    public static DamageSource createChainsawDamage(EntityLivingBase user) {
-        return new EntityDamageSource("chainsaw", user).setProjectile();
+    public static DamageSource createMeleeDamage(String weaponID, EntityLivingBase user) {
+        return new EntityDamageSource("melee."+weaponID, user).setProjectile();
     }
 }

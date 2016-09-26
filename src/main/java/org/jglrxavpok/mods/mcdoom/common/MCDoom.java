@@ -3,9 +3,11 @@ package org.jglrxavpok.mods.mcdoom.common;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
@@ -21,6 +23,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import org.jglrxavpok.mods.mcdoom.common.entity.MCDoomProjectileEntity;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomGoreHandler;
 import org.jglrxavpok.mods.mcdoom.common.eventhandlers.MCDoomTickEvents;
@@ -30,6 +33,8 @@ import org.jglrxavpok.mods.mcdoom.common.items.ItemAmmo;
 import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 import org.jglrxavpok.mods.mcdoom.common.network.MessageSpawnGoreParticles;
 import org.jglrxavpok.mods.mcdoom.common.weapons.EnumWeaponType;
+import org.jglrxavpok.mods.mcdoom.common.weapons.MCDoomProjectiles;
+import org.jglrxavpok.mods.mcdoom.common.weapons.ProjectileSupplier;
 import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 
 import java.io.InputStreamReader;
@@ -77,7 +82,7 @@ public class MCDoom {
 
         gson = new Gson();
         registerItems();
-        EntityRegistry.registerModEntity(PlasmaBallEntity.class, "plasma_ball", 0, this, 64, 20, true);
+        registerProjectiles();
 
         loadSounds();
         proxy.preInit(evt);
@@ -86,6 +91,16 @@ public class MCDoom {
         MinecraftForge.EVENT_BUS.register(new MCDoomGoreHandler());
         MinecraftForge.EVENT_BUS.register(new MCDoomTickEvents());
         registerPackets();
+    }
+
+    private void registerProjectiles() {
+        EntityRegistry.registerModEntity(PlasmaBallEntity.class, "plasma_ball", 0, this, 64, 20, true);
+        MCDoomProjectiles.registerProjectile("plasma_ball", new ProjectileSupplier() {
+            @Override
+            public MCDoomProjectileEntity create(World world, EntityLivingBase shooter) {
+                return new PlasmaBallEntity(world, shooter);
+            }
+        });
     }
 
     private void registerPackets() {

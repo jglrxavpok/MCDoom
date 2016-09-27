@@ -1,35 +1,26 @@
 package org.jglrxavpok.mods.mcdoom.common.entity;
 
 import com.google.common.base.Predicate;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.common.MCDoomDamages;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 public class PlasmaBallEntity extends MCDoomProjectileEntity {
     private static final DataParameter<Integer> DEATH_COUNTER = EntityDataManager.createKey(PlasmaBallEntity.class, DataSerializers.VARINT);

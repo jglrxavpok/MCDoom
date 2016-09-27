@@ -33,7 +33,7 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class MCDoomScreenEvents {
 
     private final MCDoomClientProxy proxy;
-    private DoomHUDRenderer hudRenderer;
+    private final DoomHUDRenderer hudRenderer;
 
     public MCDoomScreenEvents(MCDoomClientProxy proxy) {
         this.proxy = proxy;
@@ -103,6 +103,8 @@ public class MCDoomScreenEvents {
     @SubscribeEvent
     public void onWorldRenderLast(RenderWorldLastEvent evt) {
         Entity entityIn = Minecraft.getMinecraft().getRenderViewEntity();
+        if(entityIn == null)
+            return;
         float partialTicks = evt.getPartialTicks();
 
         float f = ActiveRenderInfo.getRotationX();

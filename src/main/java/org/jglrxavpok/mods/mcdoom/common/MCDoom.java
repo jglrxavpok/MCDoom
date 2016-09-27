@@ -12,7 +12,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -109,7 +108,7 @@ public class MCDoom {
         network.registerMessage(MessageSpawnGoreParticles.Handler.class, MessageSpawnGoreParticles.class, 0, Side.CLIENT);
     }
 
-    public void loadSounds() {
+    private void loadSounds() {
         chainsawUp = registerSound(new ResourceLocation(MCDoom.modid, "chainsaw.up"));
         chainsawIdle = registerSound(new ResourceLocation(MCDoom.modid, "chainsaw.idle"));
         chainsawFull = registerSound(new ResourceLocation(MCDoom.modid, "chainsaw.full"));

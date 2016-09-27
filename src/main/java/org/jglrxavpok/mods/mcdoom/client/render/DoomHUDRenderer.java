@@ -3,17 +3,11 @@ package org.jglrxavpok.mods.mcdoom.client.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelPlayer;
-import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
@@ -26,7 +20,6 @@ import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
 import org.jglrxavpok.mods.mcdoom.common.items.ItemAmmo;
 import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -50,7 +43,7 @@ public class DoomHUDRenderer {
 
         hurtSign = 1;
 
-        headModel = new PlayerHeadModel(1f);
+        headModel = new PlayerHeadModel();
     }
 
     public float draw(ScaledResolution resolution, float partialTicks) {
@@ -83,7 +76,7 @@ public class DoomHUDRenderer {
         float healthY = 25;
         renderText(health+"%", healthX*yScale, screenH-healthY*yScale, yScale*.9f);
 
-        int armor = (int) (player.getTotalArmorValue()*10);
+        int armor = player.getTotalArmorValue()*10;
         float armorX = 198f-getTextWidth(armor+"")*0.9f;
         float armorY = 25;
         renderText(""+armor, armorX*yScale, screenH-armorY*yScale, yScale*.9f);
@@ -211,18 +204,17 @@ public class DoomHUDRenderer {
         tessellator.draw();
     }
 
-    private void renderPlayerHead(float screenW, float screenH, float yScale) {
+    private void renderPlayerHead(float screenW, float screenH, float scale) {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayerSP ent = mc.thePlayer;
         if(ent != null) {
             GlStateManager.enableAlpha();
             GlStateManager.pushMatrix();
-            float posX = 123f*yScale;
-            float posY = screenH - 8f*yScale;
-            float scale = yScale;
+            float posX = 123f*scale;
+            float posY = screenH - 8f*scale;
 
-            GlStateManager.translate((float)posX, (float)posY, 50.0F);
-            GlStateManager.scale((float)(-scale), (float)scale, (float)scale);
+            GlStateManager.translate(posX, posY, 50.0F);
+            GlStateManager.scale(-scale, scale, scale);
 
             if(ent.hurtTime == 0)
                 hurtSign = -hurtSign;

@@ -1,13 +1,10 @@
 package org.jglrxavpok.mods.mcdoom.common.weapons;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
 import org.jglrxavpok.mods.mcdoom.common.entity.MCDoomProjectileEntity;
-import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class MCDoomProjectiles {

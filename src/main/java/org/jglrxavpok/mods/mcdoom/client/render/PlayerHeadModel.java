@@ -10,7 +10,8 @@ public class PlayerHeadModel extends ModelBase {
     private final ModelRenderer bipedHead;
     private final ModelRenderer bipedHeadwear;
 
-    public PlayerHeadModel(float modelSize) {
+    public PlayerHeadModel() {
+        final float modelSize = 1f;
         this.textureHeight = 64;
         this.textureWidth = 64;
         // TAKEN FROM ModelBiped.java

@@ -22,13 +22,14 @@ public class MathUtils {
         });
         Entity closest = null;
         double shortestDistance = Double.POSITIVE_INFINITY;
+        // TODO: Rewrite raycasting, does not work really well with big distances
         for (Entity e : entities) { // now check that the entity is in front of the facing direction
             Vec3d fromStartToEntityVec = new Vec3d(e.getPosition().add(e.width/2f, e.height/2f, e.width/2f)).subtract(from);
             double dotResult = direction.dotProduct(fromStartToEntityVec);
 
             // could have normalized the vectors here but this would create even more Vec3d instances that needed
             double angle = Math.acos(dotResult / (fromStartToEntityVec.lengthVector() * direction.lengthVector()));
-            if(angle <= Math.PI/4f && shortestDistance > fromStartToEntityVec.lengthVector()) {
+            if(angle%(Math.PI*2.0) <= Math.PI/6.0 && shortestDistance > fromStartToEntityVec.lengthVector()) {
                 closest = e;
                 shortestDistance = fromStartToEntityVec.lengthVector();
             }

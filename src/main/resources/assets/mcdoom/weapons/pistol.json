@@ -1,0 +1,33 @@
+{
+  "id": "pistol",
+  "cooldown": 10,
+  "triggerDelay": 0,
+  "ammoType": "bullet",
+  "weaponType": "hitscan",
+  "baseDamage": 10,
+  "render": {
+    "textures": [
+      {
+        "file": "hud/pistolsheet.png",
+        "id": "pistolsheet",
+        "width": 350,
+        "height": 124
+      }
+    ],
+
+    "regions": [
+      {
+        "id": "idle",
+        "texture": "pistolsheet",
+        "region": [0, 62, 57, 124]
+      }
+    ],
+    "layers": [
+      {
+        "condition": "1",
+        "region": "idle",
+        "zPriority": 0
+      }
+    ]
+  }
+}

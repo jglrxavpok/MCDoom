@@ -148,7 +148,7 @@ public class MCDoom {
     }
 
     public String[] getWeaponIDs() {
-        return new String[]{ "bfg9000", "chainsaw" };
+        return new String[]{ "bfg9000", "chainsaw", "pistol" };
     }
 
     private WeaponDefinition loadWeapon(String id) {

@@ -24,7 +24,7 @@ public class MCDoomWeaponUpdater {
         for(ItemStack s : inventory) {
             if(s == null)
                 continue;
-            if(s.getItem() instanceof WeaponItem) { // TODO: Change to generic class
+            if(s.getItem() instanceof WeaponItem) {
                 if(s.getItemDamage() != 0) {
                     s.setItemDamage(s.getItemDamage()-1); // TODO: Change depending on weapon
                 }

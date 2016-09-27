@@ -40,7 +40,7 @@ public class DoomHUDRenderer {
     private final static int[] bigFontCharX = {0,16,28,43,58,73,88,103,118,133,148,162};
     private final ResourceLocation bigFontLocation;
     private final ResourceLocation inventoryFontLocation;
-    private PlayerHeadModel headModel; // TODO: Make final
+    private final PlayerHeadModel headModel;
     private int hurtSign;
 
     public DoomHUDRenderer() {
@@ -220,8 +220,6 @@ public class DoomHUDRenderer {
             float posX = 123f*yScale;
             float posY = screenH - 8f*yScale;
             float scale = yScale;
-
-            // TODO: Find out why the head never has the same size when reloading the game
 
             GlStateManager.translate((float)posX, (float)posY, 50.0F);
             GlStateManager.scale((float)(-scale), (float)scale, (float)scale);

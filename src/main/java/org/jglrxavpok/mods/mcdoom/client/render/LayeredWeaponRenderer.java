@@ -43,11 +43,6 @@ public class LayeredWeaponRenderer extends WeaponRenderer {
     @Override
     public void renderWeapon(EntityPlayer player, ItemStack currentItem, ScaledResolution resolution, float partialTicks, float verticalOffset) {
         frame++;
-        if(Minecraft.getMinecraft().gameSettings.keyBindSwapHands.isKeyDown()) {
-            Collections.sort(layers, layerComparator);
-            System.out.println("reordering!");
-            // TODO: remove
-        }
 
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();

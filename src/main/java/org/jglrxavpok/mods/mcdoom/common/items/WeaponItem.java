@@ -61,7 +61,7 @@ public class WeaponItem extends Item {
                     break;
 
                 case MELEE:
-                    raycastDistance = 4f; // reduced to 4 block to simulate melee weapons
+                    raycastDistance = 3f; // reduced to 3 blocks to simulate melee weapons
                 case HITSCAN: // fall through intentional, same code used twice otherwise
                     RayTraceResult raycast = MathUtils.raycast(world, shooter.getPositionEyes(1f).addVector(shooter.width/2f, 0, shooter.width/2f), shooter.getLookVec(), raycastDistance, new Predicate<Entity>() {
                         @Override

@@ -20,7 +20,8 @@ public class MathUtils {
         Entity closest = null;
 
         Vec3d end = from.addVector(direction.xCoord * maxDistance, direction.yCoord * maxDistance, direction.zCoord * maxDistance);
-        AxisAlignedBB aabb = new AxisAlignedBB(from.xCoord, from.yCoord, from.zCoord, from.xCoord, from.yCoord, from.zCoord).addCoord(direction.xCoord * maxDistance, direction.yCoord * maxDistance, direction.zCoord * maxDistance).expand(1.0D, 1.0D, 1.0D);
+        float r = 1f;
+        AxisAlignedBB aabb = new AxisAlignedBB(from.xCoord-r, from.yCoord-r, from.zCoord-r, from.xCoord+r, from.yCoord+r, from.zCoord+r).addCoord(direction.xCoord * maxDistance, direction.yCoord * maxDistance, direction.zCoord * maxDistance).expand(1.0D, 1.0D, 1.0D);
         List<Entity> list = world.getEntitiesInAABBexcluding(null, aabb, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
         {
             public boolean apply(@Nullable Entity input)

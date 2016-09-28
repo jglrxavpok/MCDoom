@@ -68,7 +68,7 @@ public class WeaponItem extends Item {
                         public boolean apply(@Nullable Entity input) {
                             return input != shooter;
                         }
-                    }, shooter);
+                    });
                     if(raycast != null) {
                         if(raycast.typeOfHit == RayTraceResult.Type.ENTITY && raycast.entityHit instanceof EntityLivingBase) {
                             raycast.entityHit.attackEntityFrom(MCDoomDamages.createMeleeDamage(definition.getId(), shooter), definition.getBaseDamage());

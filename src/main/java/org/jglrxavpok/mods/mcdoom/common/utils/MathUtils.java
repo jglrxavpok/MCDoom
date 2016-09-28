@@ -15,13 +15,13 @@ import java.util.List;
 
 public class MathUtils {
 
-    public static RayTraceResult raycast(World world, final Vec3d from, Vec3d direction, float maxDistance, final Predicate<Entity> entityFilter, EntityLivingBase shooter /*Temporary*/) {
+    public static RayTraceResult raycast(World world, final Vec3d from, Vec3d direction, float maxDistance, final Predicate<Entity> entityFilter) {
         direction = direction.normalize();
         Entity closest = null;
 
         Vec3d end = from.addVector(direction.xCoord * maxDistance, direction.yCoord * maxDistance, direction.zCoord * maxDistance);
-        AxisAlignedBB aabb = shooter.getEntityBoundingBox().addCoord(direction.xCoord * maxDistance, direction.yCoord * maxDistance, direction.zCoord * maxDistance).expand(1.0D, 1.0D, 1.0D);
-        List<Entity> list = world.getEntitiesInAABBexcluding(shooter, aabb, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
+        AxisAlignedBB aabb = new AxisAlignedBB(from.xCoord, from.yCoord, from.zCoord, from.xCoord, from.yCoord, from.zCoord).addCoord(direction.xCoord * maxDistance, direction.yCoord * maxDistance, direction.zCoord * maxDistance).expand(1.0D, 1.0D, 1.0D);
+        List<Entity> list = world.getEntitiesInAABBexcluding(null, aabb, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
         {
             public boolean apply(@Nullable Entity input)
             {

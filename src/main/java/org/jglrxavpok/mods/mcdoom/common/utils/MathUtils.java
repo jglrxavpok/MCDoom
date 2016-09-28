@@ -1,7 +1,11 @@
 package org.jglrxavpok.mods.mcdoom.common.utils;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -11,32 +15,47 @@ import java.util.List;
 
 public class MathUtils {
 
-    public static RayTraceResult raycast(World world, final Vec3d from, Vec3d direction, float maxDistance, final Predicate<Entity> entityFilter) {
+    public static RayTraceResult raycast(World world, final Vec3d from, Vec3d direction, float maxDistance, final Predicate<Entity> entityFilter, EntityLivingBase shooter /*Temporary*/) {
         direction = direction.normalize();
-        final float maxDistanceSq = maxDistance * maxDistance;
-        List<Entity> entities = world.getEntities(Entity.class, new Predicate<Entity>() {
-            @Override
-            public boolean apply(@Nullable Entity input) {
-                return input != null && entityFilter.apply(input) && input.getDistanceSq(from.xCoord, from.yCoord, from.zCoord) < maxDistanceSq;
-            }
-        });
         Entity closest = null;
-        double shortestDistance = Double.POSITIVE_INFINITY;
-        // TODO: Rewrite raycasting, does not work really well with big distances
-        for (Entity e : entities) { // now check that the entity is in front of the facing direction
-            Vec3d fromStartToEntityVec = new Vec3d(e.getPosition().add(e.width/2f, e.height/2f, e.width/2f)).subtract(from);
-            double dotResult = direction.dotProduct(fromStartToEntityVec);
 
-            // could have normalized the vectors here but this would create even more Vec3d instances that needed
-            double angle = Math.acos(dotResult / (fromStartToEntityVec.lengthVector() * direction.lengthVector()));
-            if(angle%(Math.PI*2.0) <= Math.PI/6.0 && shortestDistance > fromStartToEntityVec.lengthVector()) {
-                closest = e;
-                shortestDistance = fromStartToEntityVec.lengthVector();
+        Vec3d end = from.addVector(direction.xCoord * maxDistance, direction.yCoord * maxDistance, direction.zCoord * maxDistance);
+        AxisAlignedBB aabb = shooter.getEntityBoundingBox().addCoord(direction.xCoord * maxDistance, direction.yCoord * maxDistance, direction.zCoord * maxDistance).expand(1.0D, 1.0D, 1.0D);
+        List<Entity> list = world.getEntitiesInAABBexcluding(shooter, aabb, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
+        {
+            public boolean apply(@Nullable Entity input)
+            {
+                return input != null && input.canBeCollidedWith();
+            }
+        }, entityFilter));
+        double shortestDistance = maxDistance;
+
+        for (Entity entity : list)
+        {
+            AxisAlignedBB entityAABB = entity.getEntityBoundingBox();
+            RayTraceResult intercept = entityAABB.calculateIntercept(from, end);
+
+            if (entityAABB.isVecInside(from))
+            {
+                if (shortestDistance >= 0.0D)
+                {
+                    closest = entity;
+                    shortestDistance = 0.0D;
+                }
+            }
+            else if (intercept != null)
+            {
+                double distance = from.distanceTo(intercept.hitVec);
+
+                if (distance < shortestDistance || shortestDistance == 0.0D)
+                {
+                    closest = entity;
+                    shortestDistance = distance;
+                }
             }
         }
+
         if(closest == null) {
-            Vec3d dir = direction.normalize().scale(maxDistance);
-            Vec3d end = from.add(dir);
             return world.rayTraceBlocks(from, end, false, true, true);
         } else {
             return new RayTraceResult(closest);

@@ -1,6 +1,6 @@
 {
   "id": "pistol",
-  "cooldown": 10,
+  "cooldown": 200,
   "triggerDelay": 0,
   "ammoType": "bullet",
   "weaponType": "hitscan",
@@ -20,12 +20,22 @@
         "id": "idle",
         "texture": "pistolsheet",
         "region": [0, 62, 57, 124]
+      },
+      {
+        "id": "shotEnd",
+        "texture": "pistolsheet",
+        "region": [264, 21, 341, 124]
       }
     ],
     "layers": [
       {
-        "condition": "1",
+        "condition": "state=idle",
         "region": "idle",
+        "zPriority": 0
+      },
+      {
+        "condition": "state=cooling_down",
+        "region": "shotEnd",
         "zPriority": 0
       }
     ]

@@ -39,7 +39,7 @@ public class WeaponItem extends Item {
             if(getMaxItemUseDuration(itemStackIn) > 0) {
                 playerIn.setActiveHand(hand);
             } else {
-                fire(worldIn, playerIn);
+                fire(worldIn, playerIn, itemStackIn);
             }
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
         }
@@ -51,7 +51,8 @@ public class WeaponItem extends Item {
 
     }
 
-    private void fire(World world, final EntityLivingBase shooter) {
+    private void fire(World world, final EntityLivingBase shooter, ItemStack stack) {
+        stack.setItemDamage(getMaxDamage());
         if(!world.isRemote) {
             float raycastDistance = 2000f; // 2000 blocks across
             switch (definition.getWeaponType()) {
@@ -86,8 +87,7 @@ public class WeaponItem extends Item {
     }
 
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-        fire(worldIn, entityLiving);
-        stack.setItemDamage(getMaxDamage());
+        fire(worldIn, entityLiving, stack);
         return stack;
     }
 

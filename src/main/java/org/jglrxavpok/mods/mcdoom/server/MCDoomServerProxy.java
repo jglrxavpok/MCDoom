@@ -1,13 +1,13 @@
 package org.jglrxavpok.mods.mcdoom.server;
 
+import fr.minecraftforgefrance.sfd.common.SFDProxy;
 import net.minecraft.client.particle.Particle;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.jglrxavpok.mods.mcdoom.common.MCDoomProxy;
 
-public class MCDoomServerProxy extends MCDoomProxy {
+public class MCDoomServerProxy extends SFDProxy {
     @Override
     public void preInit(FMLPreInitializationEvent evt) {
 

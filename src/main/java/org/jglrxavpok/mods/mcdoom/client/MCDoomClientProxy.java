@@ -3,6 +3,7 @@ package org.jglrxavpok.mods.mcdoom.client;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
+import fr.minecraftforgefrance.sfd.common.SFDProxy;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
@@ -26,7 +27,6 @@ import org.jglrxavpok.mods.mcdoom.client.render.RenderPlasmaBall;
 import org.jglrxavpok.mods.mcdoom.client.render.WeaponRenderer;
 import org.jglrxavpok.mods.mcdoom.client.render.WeaponRendererLoader;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
-import org.jglrxavpok.mods.mcdoom.common.MCDoomProxy;
 import org.jglrxavpok.mods.mcdoom.common.entity.PlasmaBallEntity;
 
 import java.util.ArrayDeque;
@@ -34,7 +34,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 @SideOnly(Side.CLIENT)
-public class MCDoomClientProxy extends MCDoomProxy {
+public class MCDoomClientProxy extends SFDProxy {
 
     private final MCDoomScreenEvents screenEventHandler;
     private final WeaponRendererLoader weaponRendererLoader;

@@ -1,6 +1,9 @@
 package org.jglrxavpok.mods.mcdoom.common.items;
 
 import com.google.common.base.Predicate;
+import fr.minecraftforgefrance.sfd.common.SFDProjectiles;
+import fr.minecraftforgefrance.sfd.common.entity.SFDProjectileEntity;
+import fr.minecraftforgefrance.sfd.maths.MathUtils;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,9 +16,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
 import org.jglrxavpok.mods.mcdoom.common.MCDoomDamages;
-import org.jglrxavpok.mods.mcdoom.common.entity.MCDoomProjectileEntity;
-import org.jglrxavpok.mods.mcdoom.common.utils.MathUtils;
-import org.jglrxavpok.mods.mcdoom.common.weapons.MCDoomProjectiles;
 import org.jglrxavpok.mods.mcdoom.common.weapons.WeaponDefinition;
 
 import javax.annotation.Nullable;
@@ -57,7 +57,7 @@ public class WeaponItem extends Item {
             float raycastDistance = 2000f; // 2000 blocks across
             switch (definition.getWeaponType()) {
                 case PROJECTILE:
-                    MCDoomProjectileEntity entity = MCDoomProjectiles.create(world, definition.getProjectileType(), shooter);
+                    SFDProjectileEntity entity = SFDProjectiles.create(world, definition.getProjectileType(), shooter);
                     world.spawnEntityInWorld(entity);
                     break;
 

@@ -1,6 +1,7 @@
 package org.jglrxavpok.mods.mcdoom.common.entity;
 
 import com.google.common.base.Predicate;
+import fr.minecraftforgefrance.sfd.common.entity.SFDProjectileEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
@@ -22,7 +23,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class PlasmaBallEntity extends MCDoomProjectileEntity {
+public class PlasmaBallEntity extends SFDProjectileEntity {
     private static final DataParameter<Integer> DEATH_COUNTER = EntityDataManager.createKey(PlasmaBallEntity.class, DataSerializers.VARINT);
     public static final int MAX_DEATH_COUNTER = 5;
     private List<Entity> targets;

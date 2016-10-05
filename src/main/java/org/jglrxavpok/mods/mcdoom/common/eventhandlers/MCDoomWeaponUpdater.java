@@ -1,11 +1,11 @@
 package org.jglrxavpok.mods.mcdoom.common.eventhandlers;
 
+import fr.minecraftforgefrance.sfd.common.item.WeaponItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 
 public class MCDoomWeaponUpdater {
 

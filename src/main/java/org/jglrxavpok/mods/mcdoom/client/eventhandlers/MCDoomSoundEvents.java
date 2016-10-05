@@ -1,5 +1,6 @@
 package org.jglrxavpok.mods.mcdoom.client.eventhandlers;
 
+import fr.minecraftforgefrance.sfd.common.item.WeaponItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -10,7 +11,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
-import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 
 @SideOnly(Side.CLIENT)
 public class MCDoomSoundEvents {

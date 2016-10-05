@@ -1,5 +1,6 @@
 package org.jglrxavpok.mods.mcdoom.client.eventhandlers;
 
+import fr.minecraftforgefrance.sfd.common.item.WeaponItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.particle.Particle;
@@ -24,7 +25,6 @@ import org.jglrxavpok.mods.mcdoom.client.particle.EntityGoreFX;
 import org.jglrxavpok.mods.mcdoom.client.render.DoomHUDRenderer;
 import org.jglrxavpok.mods.mcdoom.client.render.WeaponRenderer;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
-import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 
 import static org.lwjgl.opengl.GL11.GL_GREATER;
 import static org.lwjgl.opengl.GL11.GL_QUADS;

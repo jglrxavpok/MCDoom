@@ -1,5 +1,8 @@
 package org.jglrxavpok.mods.mcdoom.client.render;
 
+import fr.minecraftforgefrance.sfd.common.item.FunWeaponItem;
+import fr.minecraftforgefrance.sfd.common.item.ItemAmmo;
+import fr.minecraftforgefrance.sfd.common.item.WeaponItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
@@ -17,9 +20,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jglrxavpok.mods.mcdoom.common.MCDoom;
-import org.jglrxavpok.mods.mcdoom.common.items.FunWeaponItem;
-import org.jglrxavpok.mods.mcdoom.common.items.ItemAmmo;
-import org.jglrxavpok.mods.mcdoom.common.items.WeaponItem;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)

@@ -10,6 +10,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.RayTraceResult;
@@ -17,7 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jglrxavpok.mods.mcdoom.common.MCDoomDamages;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class PlasmaBallEntity extends SFDProjectileEntity {
         if(!worldObj.isRemote && result.typeOfHit != RayTraceResult.Type.MISS) {
             if(!isDying()) {
                 if(result.typeOfHit == RayTraceResult.Type.ENTITY) {
-                    result.entityHit.attackEntityFrom(MCDoomDamages.createBFG9000Damage(this, getThrower()), 10f);
+                    result.entityHit.attackEntityFrom(createBFG9000Damage(this, getThrower()), 10f);
                 }
                 prepareDeath();
             }
@@ -76,9 +77,9 @@ public class PlasmaBallEntity extends SFDProjectileEntity {
                 for(Entity t : targets) {
                     if(t instanceof EntityDragon) {
                         EntityDragon dragon = ((EntityDragon) t);
-                        dragon.attackEntityFromPart(dragon.dragonPartHead, MCDoomDamages.createBFG9000Damage(this, getThrower()), 15f);
+                        dragon.attackEntityFromPart(dragon.dragonPartHead, createBFG9000Damage(this, getThrower()), 15f);
                     } else {
-                        t.attackEntityFrom(MCDoomDamages.createBFG9000Damage(this, getThrower()), 15f);
+                        t.attackEntityFrom(createBFG9000Damage(this, getThrower()), 15f);
                     }
                 }
             } else {
@@ -106,6 +107,10 @@ public class PlasmaBallEntity extends SFDProjectileEntity {
         if(deathCounter == 0) {
             setDead();
         }
+    }
+
+    private static DamageSource createBFG9000Damage(Entity plasmaBall, EntityLivingBase shooter) {
+        return new EntityDamageSourceIndirect("bfg9000", plasmaBall, shooter).setProjectile();
     }
 
     @Override
